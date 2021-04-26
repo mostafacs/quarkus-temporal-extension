@@ -19,14 +19,25 @@ package io.quarkus.temporal.client.it;
 import javax.enterprise.context.ApplicationScoped;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.inject.Inject;
+import io.temporal.client.WorkflowClient;
+import io.quarkus.temporal.runtime.config.WorkflowConfigurations;
+
 
 @Path("/temporal-client")
 @ApplicationScoped
 public class TemporalClientResource {
     // add some rest methods here
 
+    @Inject
+    WorkflowClient workflowClient;
+
+    @Inject
+    WorkflowConfigurations workflowConfigurations;
+
     @GET
     public String hello() {
-        return "Hello temporal-client";
+
+        return "workfow = "+workflowClient.toString() +" - config"+workflowConfigurations.toString();
     }
 }
