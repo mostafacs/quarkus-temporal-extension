@@ -15,6 +15,8 @@ import io.quarkus.temporal.runtime.TemporalRecorder;
 import io.quarkus.temporal.runtime.WorkflowRuntimeBuildItem;
 import io.quarkus.temporal.runtime.annotations.TemporalActivity;
 import io.quarkus.temporal.runtime.annotations.TemporalWorkflow;
+import io.quarkus.temporal.runtime.builder.ActivityBuilder;
+import io.quarkus.temporal.runtime.builder.WorkflowBuilder;
 import io.quarkus.temporal.runtime.config.WorkflowConfigurations;
 import org.jboss.jandex.AnnotationInstance;
 import org.jboss.jandex.AnnotationValue;
@@ -22,6 +24,9 @@ import org.jboss.jandex.DotName;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Singleton;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.InputStream;
 
 /**
  * @Author Mostafa Albana
@@ -88,6 +93,8 @@ class TemporalClientProcessor {
     void initBeans(BuildProducer<AdditionalBeanBuildItem> additionalBeans,
                    WorkflowBuildItem workflowBuildItem) {
 
+        additionalBeans.produce(AdditionalBeanBuildItem.builder().addBeanClass(ActivityBuilder.class).build());
+        additionalBeans.produce(AdditionalBeanBuildItem.builder().addBeanClass(WorkflowBuilder.class).build());
 
         additionalBeans.produce(AdditionalBeanBuildItem.builder().setUnremovable()
                 .addBeanClasses(workflowBuildItem.getWorkflowRuntimeBuildItems().getActivitiesFlat())

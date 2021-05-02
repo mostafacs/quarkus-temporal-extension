@@ -20,6 +20,10 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.inject.Inject;
+
+import io.quarkus.temporal.client.it.workflow.TestActivityImpl;
+import io.quarkus.temporal.client.it.workflow.TestWorkflow;
+import io.quarkus.temporal.runtime.builder.WorkflowBuilder;
 import io.temporal.client.WorkflowClient;
 import io.quarkus.temporal.runtime.config.WorkflowConfigurations;
 import io.temporal.client.WorkflowClientOptions;
@@ -33,25 +37,31 @@ public class TemporalClientResource {
     // add some rest methods here
 
 
-    @Inject
-    WorkerFactory workerFactory;
+//    @Inject
+//    WorkerFactory workerFactory;
+//
+//    @Inject
+//    WorkflowClient workflowClient;
+
+//    @Inject
+//    WorkflowConfigurations workflowConfigurations;
 
     @Inject
-    WorkflowClient workflowClient;
+    WorkflowBuilder workflowBuilder;
 
-    @Inject
-    WorkflowConfigurations workflowConfigurations;
-
-    @Inject
-    TestActivity testActivity;
+//    @Inject
+//    TestActivityImpl testActivity;
 
     @GET
     public String hello() {
 
-        Worker worker = workerFactory.getWorker("testQueue");
-        workflowConfigurations.activityHeartTimeout(Object.class, Object.class);
-        WorkflowClientOptions opt= workflowClient.getOptions();
-        System.out.println(testActivity.hello());
-        return "workfow = "+workflowClient.toString() +" - config"+workflowConfigurations.toString()+" - "+testActivity.hello();
+//        Worker worker = workerFactory.getWorker("testQueue");
+//        workflowConfigurations.activityHeartTimeout(Object.class, Object.class);
+//        WorkflowClientOptions opt= workflowClient.getOptions();
+//        System.out.println(testActivity.hello());
+
+        TestWorkflow testWorkflow = workflowBuilder.build(TestWorkflow.class, "test123");
+        testWorkflow.run();
+        return "workfow started";
     }
 }

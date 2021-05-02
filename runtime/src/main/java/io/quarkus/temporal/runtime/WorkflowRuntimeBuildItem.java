@@ -11,6 +11,8 @@ public final class WorkflowRuntimeBuildItem {
 
     private Map<String, List<String>> workflows = new HashMap<>();
 
+    Map<Class, String> workflowToQueue = new HashMap<>();
+
     private List<String> activitiesFlat = new ArrayList<>();
 
 
@@ -37,6 +39,15 @@ public final class WorkflowRuntimeBuildItem {
             a.add(clazz);
             workflows.put(queue, a);
         }
+    }
+
+
+    public void putWorkflow(Class workflowInterface, String queue) {
+        workflowToQueue.put(workflowInterface, queue);
+    }
+
+    public String getQueue(Class workflowInterface) {
+        return workflowToQueue.get(workflowInterface);
     }
 
     public Map<String, List<String>> getActivities() {
