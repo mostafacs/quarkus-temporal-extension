@@ -22,7 +22,6 @@ public class TemporalRecorder {
     private static final String WORKFLOWS_FILE_CONFIG = "/Users/mac/quarkus-temporal-extension/integration-tests/src/main/resources/workflow.yml";
 
     Logger logger = LoggerFactory.getLogger(this.getClass());
-    WorkflowConfigurations workflowConfigurations = null;
 
     public RuntimeValue<WorkflowConfigurations> createWorkflowConfigs() {
 
@@ -37,5 +36,7 @@ public class TemporalRecorder {
         }
         return null;
     }
+
+
 
 }

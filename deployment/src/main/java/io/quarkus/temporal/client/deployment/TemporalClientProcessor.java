@@ -7,11 +7,21 @@ import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.annotations.ExecutionTime;
 import io.quarkus.deployment.annotations.Record;
 import io.quarkus.deployment.builditem.AdditionalApplicationArchiveMarkerBuildItem;
+import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
-import io.quarkus.temporal.runtime.TemporalAbstractConfiguration;
+import io.quarkus.temporal.runtime.GenericSupplier;
+import io.quarkus.temporal.runtime.TemporalBeansProducer;
 import io.quarkus.temporal.runtime.TemporalRecorder;
+import io.quarkus.temporal.runtime.WorkflowRuntimeBuildItem;
+import io.quarkus.temporal.runtime.annotations.TemporalActivity;
+import io.quarkus.temporal.runtime.annotations.TemporalWorkflow;
 import io.quarkus.temporal.runtime.config.WorkflowConfigurations;
+import org.jboss.jandex.AnnotationInstance;
+import org.jboss.jandex.AnnotationValue;
+import org.jboss.jandex.DotName;
+
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Singleton;
 
 /**
  * @Author Mostafa Albana
@@ -26,43 +36,64 @@ class TemporalClientProcessor {
     }
 
     @BuildStep
-    void initBeans(BuildProducer<AdditionalBeanBuildItem> additionalBeans) {
-        additionalBeans.produce(AdditionalBeanBuildItem.builder().addBeanClass(TemporalAbstractConfiguration.class).build());
-    }
-
-    @BuildStep
     AdditionalApplicationArchiveMarkerBuildItem required() {
         return new AdditionalApplicationArchiveMarkerBuildItem("workflow.yml");
     }
+
     @BuildStep
     @Record(ExecutionTime.STATIC_INIT)
     void buildConfigs(TemporalRecorder recorder,
-                      BuildProducer<SyntheticBeanBuildItem> syntheticBeanBuildItemBuildProducer) throws Exception{
+                      BuildProducer<SyntheticBeanBuildItem> syntheticBeanBuildItemBuildProducer) throws Exception {
 
-        SyntheticBeanBuildItem syntheticBeanBuildItem = SyntheticBeanBuildItem.configure(WorkflowConfigurations.class)
+        SyntheticBeanBuildItem workflowConfigBuildItem = SyntheticBeanBuildItem.configure(WorkflowConfigurations.class)
                 .scope(ApplicationScoped.class)
                 .runtimeValue(recorder.createWorkflowConfigs())
                 .done();
-        syntheticBeanBuildItemBuildProducer.produce(syntheticBeanBuildItem);
-
+        syntheticBeanBuildItemBuildProducer.produce(workflowConfigBuildItem);
     }
 
-//    buildWorkflowFactories(BeanContainerBuildItem beanContainerBuildItem,
-//    CombinedIndexBuildItem combinedIndex
-//    ) {
-//        WorkflowClient workflowClient = beanContainerBuildItem.getValue().instance(WorkflowClient.class);
-//        //Work = recorder.
-////        for (AnnotationInstance ai : combinedIndex.getIndex()
-////                .getAnnotations(DotName.createSimple(ActivityInterface.class.getName()))) {
-////            AnnotationValue flowId = ai.value("value");
-////            if (flowId != null && flowId.asString() != null) {
-////
-////                AnnotationValue activityName = ai.value();
-////                recorder.registerFlowReference(ai.target().asClass().name().toString(),
-////                        definingDocumentId == null ? "" : definingDocumentId.asString(),
-////                        flowId.asString());
-////            }
-////        }
-//    }
+    @BuildStep
+    WorkflowBuildItem workFlowBuildItem(
+            BuildProducer<SyntheticBeanBuildItem> syntheticBeanBuildItemBuildProducer,
+            CombinedIndexBuildItem combinedIndex) {
+
+        WorkflowRuntimeBuildItem wrbi = new WorkflowRuntimeBuildItem();
+
+        for (AnnotationInstance ai : combinedIndex.getIndex()
+                .getAnnotations(DotName.createSimple(TemporalActivity.class.getName()))) {
+
+            AnnotationValue queueValue = ai.value("queue");
+            String activityClassName = ai.target().asClass().name().toString();
+            wrbi.addActivity(queueValue.value().toString(), activityClassName);
+        }
+
+        for (AnnotationInstance ai : combinedIndex.getIndex()
+                .getAnnotations(DotName.createSimple(TemporalWorkflow.class.getName()))) {
+
+            AnnotationValue queueValue = ai.value("queue");
+            String wfClassName = ai.target().asClass().name().toString();
+            wrbi.addWorkflow(queueValue.value().toString(), wfClassName);
+        }
+
+        SyntheticBeanBuildItem runtimeConfigBuildItem = SyntheticBeanBuildItem.configure(WorkflowRuntimeBuildItem.class)
+                .scope(Singleton.class)
+                .supplier(new GenericSupplier<>(wrbi))
+                .done();
+        syntheticBeanBuildItemBuildProducer.produce(runtimeConfigBuildItem);
+
+        return new WorkflowBuildItem(wrbi);
+    }
+
+    @BuildStep
+    void initBeans(BuildProducer<AdditionalBeanBuildItem> additionalBeans,
+                   WorkflowBuildItem workflowBuildItem) {
+
+
+        additionalBeans.produce(AdditionalBeanBuildItem.builder().setUnremovable()
+                .addBeanClasses(workflowBuildItem.getWorkflowRuntimeBuildItems().getActivitiesFlat())
+                .build());
+
+        additionalBeans.produce(AdditionalBeanBuildItem.builder().addBeanClass(TemporalBeansProducer.class).build());
+    }
 
 }

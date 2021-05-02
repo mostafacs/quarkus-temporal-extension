@@ -22,6 +22,9 @@ import javax.ws.rs.Path;
 import javax.inject.Inject;
 import io.temporal.client.WorkflowClient;
 import io.quarkus.temporal.runtime.config.WorkflowConfigurations;
+import io.temporal.client.WorkflowClientOptions;
+import io.temporal.worker.Worker;
+import io.temporal.worker.WorkerFactory;
 
 
 @Path("/temporal-client")
@@ -29,15 +32,26 @@ import io.quarkus.temporal.runtime.config.WorkflowConfigurations;
 public class TemporalClientResource {
     // add some rest methods here
 
+
+    @Inject
+    WorkerFactory workerFactory;
+
     @Inject
     WorkflowClient workflowClient;
 
     @Inject
     WorkflowConfigurations workflowConfigurations;
 
+    @Inject
+    TestActivity testActivity;
+
     @GET
     public String hello() {
 
-        return "workfow = "+workflowClient.toString() +" - config"+workflowConfigurations.toString();
+        Worker worker = workerFactory.getWorker("testQueue");
+        workflowConfigurations.activityHeartTimeout(Object.class, Object.class);
+        WorkflowClientOptions opt= workflowClient.getOptions();
+        System.out.println(testActivity.hello());
+        return "workfow = "+workflowClient.toString() +" - config"+workflowConfigurations.toString()+" - "+testActivity.hello();
     }
 }

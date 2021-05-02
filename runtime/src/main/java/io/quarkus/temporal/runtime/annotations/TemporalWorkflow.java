@@ -1,18 +1,13 @@
-package io.quarkus.temporal.runtime;
-
-import io.temporal.activity.ActivityInterface;
+package io.quarkus.temporal.runtime.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@ActivityInterface
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface TemporalActivity {
+public @interface TemporalWorkflow {
 
-    String name();
-
-    Class workflow();
+    String queue();
 }
