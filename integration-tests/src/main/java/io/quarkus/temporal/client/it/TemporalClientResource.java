@@ -20,22 +20,13 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.inject.Inject;
-
-import io.quarkus.temporal.client.it.workflow.TestActivityImpl;
 import io.quarkus.temporal.client.it.workflow.TestWorkflow;
 import io.quarkus.temporal.runtime.builder.WorkflowBuilder;
-import io.temporal.client.WorkflowClient;
-import io.quarkus.temporal.runtime.config.WorkflowConfigurations;
-import io.temporal.client.WorkflowClientOptions;
-import io.temporal.worker.Worker;
-import io.temporal.worker.WorkerFactory;
 
 
 @Path("/temporal-client")
 @ApplicationScoped
 public class TemporalClientResource {
-    // add some rest methods here
-
 
 //    @Inject
 //    WorkerFactory workerFactory;
