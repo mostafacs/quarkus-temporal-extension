@@ -10,6 +10,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface TemporalActivity {
 
-    String queue();
+    String[] queue();
     String name() default "";
 }

@@ -68,9 +68,11 @@ class TemporalClientProcessor {
         for (AnnotationInstance ai : combinedIndex.getIndex()
                 .getAnnotations(DotName.createSimple(TemporalActivity.class.getName()))) {
 
-            AnnotationValue queueValue = ai.value("queue");
+            AnnotationValue[] queuesAnnValues = (AnnotationValue[]) ai.value("queue").value();
             String activityClassName = ai.target().asClass().name().toString();
-            wrbi.addActivityImpl(queueValue.value().toString(), activityClassName);
+            for(AnnotationValue queueValue : queuesAnnValues) {
+                wrbi.addActivityImpl(queueValue.value().toString(), activityClassName);
+            }
         }
 
         for (AnnotationInstance ai : combinedIndex.getIndex()
