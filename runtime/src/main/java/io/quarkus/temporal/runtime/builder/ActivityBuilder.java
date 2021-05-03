@@ -17,6 +17,9 @@ public class ActivityBuilder {
     WorkflowConfigurations configurations;
 
    public <T, I> I build(Class<T> workflow, Class<I> activity) {
+       if(!workflow.isInterface()) throw new IllegalArgumentException("Please pass Workflow interface (not implemented class)");
+       if(!activity.isInterface()) throw new IllegalArgumentException("Please pass Activity interface (not implemented class)");
+
        ActivityOptions options = buildActivityOptions(workflow, activity);
        return Workflow.newActivityStub(activity, options);
    }

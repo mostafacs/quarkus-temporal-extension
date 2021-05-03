@@ -7,11 +7,26 @@ import java.util.Map;
 
 public final class WorkflowRuntimeBuildItem {
 
+    private final class NameQueueInfo{
+
+        public NameQueueInfo() {
+        }
+
+        public NameQueueInfo(String name, String queue) {
+            this.name = name;
+            this.queue = queue;
+        }
+
+        public String name;
+        public String queue;
+    }
     private Map<String, List<String>> activities = new HashMap<>();
 
     private Map<String, List<String>> workflows = new HashMap<>();
 
-    Map<Class, String> workflowToQueue = new HashMap<>();
+    static Map<Class, NameQueueInfo> workflowToQueue = new HashMap<>();
+    static Map<Class, NameQueueInfo> activityToQueue = new HashMap<>();
+
 
     private List<String> activitiesFlat = new ArrayList<>();
 
@@ -20,7 +35,7 @@ public final class WorkflowRuntimeBuildItem {
 
     }
 
-    public void addActivity(String queue, String clazz) {
+    public void addActivityImpl(String queue, String clazz) {
         if(activities.containsKey(queue)) {
             activities.get(queue).add(clazz);
         } else {
@@ -31,7 +46,7 @@ public final class WorkflowRuntimeBuildItem {
         activitiesFlat.add(clazz);
     }
 
-    public void addWorkflow(String queue, String clazz) {
+    public void addWorkflowImpl(String queue, String clazz) {
         if(workflows.containsKey(queue)) {
             workflows.get(queue).add(clazz);
         } else {
@@ -41,13 +56,39 @@ public final class WorkflowRuntimeBuildItem {
         }
     }
 
-
-    public void putWorkflow(Class workflowInterface, String queue) {
-        workflowToQueue.put(workflowInterface, queue);
+    public void clear() {
+        this.workflows.clear();
+        this.activities.clear();
     }
 
-    public String getQueue(Class workflowInterface) {
-        return workflowToQueue.get(workflowInterface);
+    public void putWorkflowInterfaceInfo(Class workflowInterface, String queue, String name) {
+        if(name==null || name.length() == 0) {
+            name = workflowInterface.getSimpleName();
+        }
+        workflowToQueue.put(workflowInterface, new NameQueueInfo(name, queue));
+    }
+
+    public void putActivityInterfaceInfo(Class activityInterface, String queue, String name) {
+        if(name==null || name.length()==0) {
+            name = activityInterface.getSimpleName();
+        }
+        activityToQueue.put(activityInterface, new NameQueueInfo(name, queue));
+    }
+
+    public static String getWorkflowName(Class workflowInterface) {
+        return workflowToQueue.get(workflowInterface).name;
+    }
+
+    public static String getWorkflowQueue(Class workflowInterface) {
+        return workflowToQueue.get(workflowInterface).queue;
+    }
+
+    public static String getActivityName(Class activityInterface) {
+        return activityToQueue.get(activityInterface).name;
+    }
+
+    public static String getActivityQueue(Class activityInterface) {
+        return activityToQueue.get(activityInterface).queue;
     }
 
     public Map<String, List<String>> getActivities() {

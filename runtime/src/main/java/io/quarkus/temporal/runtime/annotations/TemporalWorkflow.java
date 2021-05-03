@@ -10,4 +10,5 @@ import java.lang.annotation.Target;
 public @interface TemporalWorkflow {
 
     String queue();
+    String name() default "";
 }

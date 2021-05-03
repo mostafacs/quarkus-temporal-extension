@@ -1,18 +1,15 @@
 package io.quarkus.temporal.runtime.config;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import io.quarkus.temporal.runtime.WorkflowRuntimeBuildItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
 import java.time.Duration;
 import java.util.Map;
 
-//@ApplicationScoped
-public class WorkflowConfigurations {
 
-    private static final String WORKFLOWS_FILE_CONFIG = "/workflow.yml";
+public class WorkflowConfigurations {
 
     private static final Long DEFAULT_WF_EXEC_TIMEOUT = 60l;
     private static final Long DEFAULT_WF_RUN_TIMEOUT = 60l;
@@ -33,33 +30,28 @@ public class WorkflowConfigurations {
 
     Map<String, WorkflowConfig> workflows;
 
-    //@Startup
+    
     public WorkflowConfigurations(Map<String, WorkflowConfig> workflows){
         this.workflows = workflows;
-//        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-//        try {
-//            //mapper.findAndRegisterModules();
-//            InputStream is = getClass().getResourceAsStream(WORKFLOWS_FILE_CONFIG);
-//            workflows = mapper.readValue(is, new TypeReference<Map<String, WorkflowConfig>>() {});
-//        } catch (IOException e) {
-//            logger.error("Error loading workflow configs", e);
-//        }
     }
 
     public Duration workflowExecutionTimeout(Class workflow) {
-        WorkflowConfig config = workflows.get(workflow.getSimpleName());
+        String workflowName = WorkflowRuntimeBuildItem.getWorkflowName(workflow);
+        WorkflowConfig config = workflows.get(workflowName);
         String minutes = config == null ? null : config.getExecutionTimeout();
         return getWorkflowConfig(minutes, DEFAULT_WF_EXEC_TIMEOUT);
     }
 
     public Duration workflowRunTimeout(Class workflow) {
-        WorkflowConfig config = workflows.get(workflow.getSimpleName());
+        String workflowName = WorkflowRuntimeBuildItem.getWorkflowName(workflow);
+        WorkflowConfig config = workflows.get(workflowName);
         String minutes = config == null ? null : config.getRunTimeout();
         return getWorkflowConfig(minutes, DEFAULT_WF_RUN_TIMEOUT);
     }
 
     public Duration workflowTaskTimeout(Class workflow) {
-        WorkflowConfig config = workflows.get(workflow.getSimpleName());
+        String workflowName = WorkflowRuntimeBuildItem.getWorkflowName(workflow);
+        WorkflowConfig config = workflows.get(workflowName);
         String minutes = config == null ? null : config.getTaskTimeout();
         return getWorkflowConfig(minutes, DEFAULT_WF_TASK_TIMEOUT);
     }
@@ -69,10 +61,14 @@ public class WorkflowConfigurations {
     }
 
     private WorkflowConfig.ActivityConfig getActivityConfig(Class workflow, Class activity) {
-        WorkflowConfig wfConfig = workflows.get(workflow.getSimpleName());
+
+        String workflowName = WorkflowRuntimeBuildItem.getWorkflowName(workflow);
+        String activityName = WorkflowRuntimeBuildItem.getActivityName(activity);
+
+        WorkflowConfig wfConfig = workflows.get(workflowName);
         if(wfConfig != null) {
             if(wfConfig.getActivities() != null) {
-                return wfConfig.getActivities().getOrDefault(activity.getSimpleName(), null);
+                return wfConfig.getActivities().getOrDefault(activityName, null);
             }
         }
         return null;

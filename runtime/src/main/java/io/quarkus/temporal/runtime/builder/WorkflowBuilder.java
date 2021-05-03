@@ -24,6 +24,7 @@ public class WorkflowBuilder {
     WorkflowRuntimeBuildItem workflowRuntimeBuildItem;
 
     public <T> T build(Class<T> workflowClass, String workflowId) {
+        if(!workflowClass.isInterface()) throw new IllegalArgumentException("Please pass workflow interface (not implemented class)");
         WorkflowOptions workflowOptions = buildDefaultWorkflowOptions(workflowClass, workflowId);
         return workflowClient.newWorkflowStub(workflowClass, workflowOptions);
     }
@@ -31,7 +32,7 @@ public class WorkflowBuilder {
     public WorkflowOptions buildDefaultWorkflowOptions(Class workflow, String workflowId) {
         return WorkflowOptions.newBuilder()
                 .setWorkflowId(workflowId)
-                .setTaskQueue(workflowRuntimeBuildItem.getQueue(workflow))
+                .setTaskQueue(workflowRuntimeBuildItem.getWorkflowQueue(workflow))
                 .setWorkflowExecutionTimeout(configurations.workflowExecutionTimeout(workflow))
                 .setWorkflowRunTimeout(configurations.workflowRunTimeout(workflow))
                 .setWorkflowTaskTimeout(configurations.workflowTaskTimeout(workflow))

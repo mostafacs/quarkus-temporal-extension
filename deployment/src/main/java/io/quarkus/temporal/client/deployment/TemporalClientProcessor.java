@@ -33,7 +33,7 @@ import java.io.InputStream;
  */
 class TemporalClientProcessor {
 
-    private static final String FEATURE = "temporal-client";
+    private static final String FEATURE = "temporal";
 
     @BuildStep
     FeatureBuildItem feature() {
@@ -69,7 +69,7 @@ class TemporalClientProcessor {
 
             AnnotationValue queueValue = ai.value("queue");
             String activityClassName = ai.target().asClass().name().toString();
-            wrbi.addActivity(queueValue.value().toString(), activityClassName);
+            wrbi.addActivityImpl(queueValue.value().toString(), activityClassName);
         }
 
         for (AnnotationInstance ai : combinedIndex.getIndex()
@@ -77,7 +77,7 @@ class TemporalClientProcessor {
 
             AnnotationValue queueValue = ai.value("queue");
             String wfClassName = ai.target().asClass().name().toString();
-            wrbi.addWorkflow(queueValue.value().toString(), wfClassName);
+            wrbi.addWorkflowImpl(queueValue.value().toString(), wfClassName);
         }
 
         SyntheticBeanBuildItem runtimeConfigBuildItem = SyntheticBeanBuildItem.configure(WorkflowRuntimeBuildItem.class)

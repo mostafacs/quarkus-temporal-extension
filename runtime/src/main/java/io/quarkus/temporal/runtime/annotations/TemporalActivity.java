@@ -11,4 +11,5 @@ import java.lang.annotation.Target;
 public @interface TemporalActivity {
 
     String queue();
+    String name() default "";
 }

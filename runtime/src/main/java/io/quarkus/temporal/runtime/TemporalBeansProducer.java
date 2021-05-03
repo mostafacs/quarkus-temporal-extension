@@ -2,25 +2,23 @@ package io.quarkus.temporal.runtime;
 
 import io.quarkus.arc.Arc;
 import io.quarkus.runtime.Startup;
+import io.quarkus.temporal.runtime.annotations.TemporalActivity;
 import io.quarkus.temporal.runtime.annotations.TemporalActivityStub;
+import io.quarkus.temporal.runtime.annotations.TemporalWorkflow;
 import io.quarkus.temporal.runtime.builder.ActivityBuilder;
+import io.temporal.activity.ActivityInterface;
 import io.temporal.client.WorkflowClient;
 import io.temporal.serviceclient.WorkflowServiceStubs;
 import io.temporal.serviceclient.WorkflowServiceStubsOptions;
 import io.temporal.worker.Worker;
 import io.temporal.worker.WorkerFactory;
-import io.temporal.workflow.ActivityStub;
 import io.temporal.workflow.Functions;
 import io.temporal.workflow.WorkflowInterface;
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class TemporalBeansProducer {
 
@@ -53,6 +51,13 @@ public class TemporalBeansProducer {
             for(String clazzName : classNames) {
                 Class clazz = classLoader.loadClass(clazzName);
                 activities[c]=Arc.container().select(clazz).get();
+                for(Class interfacei : clazz.getInterfaces()) {
+                    if(interfacei.isAnnotationPresent(ActivityInterface.class)) {
+                        TemporalActivity ta = (TemporalActivity) clazz.getAnnotation(TemporalActivity.class);
+                        workflowRuntimeBuildItem.putActivityInterfaceInfo(interfacei, queue, ta.name());
+                        break;
+                    }
+                }
                 c++;
             }
 
@@ -77,16 +82,14 @@ public class TemporalBeansProducer {
                 Class workflowInterface = null;
                 for(Class interfacei : interfaces) {
                     if(interfacei.isAnnotationPresent(WorkflowInterface.class)) {
-                        workflowRuntimeBuildItem.putWorkflow(interfacei, queue);
+                        TemporalWorkflow ta = (TemporalWorkflow) clazz.getAnnotation(TemporalWorkflow.class);
+                        workflowRuntimeBuildItem.putWorkflowInterfaceInfo(interfacei, queue, ta.name());
                         workflowInterface = interfacei;
+                        break;
                     }
                 }
                 if(workflowInterface == null) throw new IllegalArgumentException(clazzName+" not implement interface with @WorkflowInterface");
 
-                workflowRuntimeBuildItem.putWorkflow(workflowInterface, queue);
-                //worker.registerWorkflowImplementationTypes(clazz);
-
-//                final Class workflowInterfaceFinal = workflowInterface;
                 worker.addWorkflowImplementationFactory(workflowInterface, new SimpleWorkflowFactory(
                         clazz, workflowInterface, activityBuilder
                 ));
@@ -94,6 +97,7 @@ public class TemporalBeansProducer {
 
         }
         factory.start();
+        workflowRuntimeBuildItem.clear();
         return factory;
     }
 
