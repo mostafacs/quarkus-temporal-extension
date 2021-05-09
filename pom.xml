@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.quarkus</groupId>
   <artifactId>temporal-client-parent</artifactId>
-  <version>1.13.1.FINAL</version>
+  <version>1.13.1.Final</version>
   <packaging>pom</packaging>
   <name>Temporal Client - Parent</name>
   <modules>
@@ -20,7 +20,7 @@
     <maven.compiler.target>1.8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <quarkus.version>1.13.1.FINAL</quarkus.version>
+    <quarkus.version>1.13.1.Final</quarkus.version>
     <surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
     <temporal.version>1.0.7</temporal.version>
   </properties>

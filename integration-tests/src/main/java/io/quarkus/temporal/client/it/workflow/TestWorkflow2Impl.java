@@ -4,17 +4,17 @@ import io.quarkus.temporal.runtime.annotations.TemporalActivityStub;
 import io.quarkus.temporal.runtime.annotations.TemporalWorkflow;
 import io.temporal.workflow.Workflow;
 
-@TemporalWorkflow(queue = "testQueue")
-public class TestWorkflowImpl implements TestWorkflow {
+@TemporalWorkflow(queue = "queue2")
+public class TestWorkflow2Impl implements TestWorkflow2 {
 
     @TemporalActivityStub
     TestActivity testActivity;
 
+
     @Override
-    public void run() {
-        //Workflow.sleep(3000);
+    public void test() {
         System.out.println(testActivity.hello());
-        Workflow.sleep(10000);
-        System.out.println("Workflow <<1>> completed");
+        Workflow.sleep(5000);
+        System.out.println("TestWorkflow <<2>> is completed");
     }
 }

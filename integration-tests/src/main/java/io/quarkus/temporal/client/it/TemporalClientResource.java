@@ -21,7 +21,9 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.inject.Inject;
 import io.quarkus.temporal.client.it.workflow.TestWorkflow;
+import io.quarkus.temporal.client.it.workflow.TestWorkflow2;
 import io.quarkus.temporal.runtime.builder.WorkflowBuilder;
+import io.temporal.client.WorkflowClient;
 
 
 @Path("/temporal-client")
@@ -52,7 +54,12 @@ public class TemporalClientResource {
 //        System.out.println(testActivity.hello());
 
         TestWorkflow testWorkflow = workflowBuilder.build(TestWorkflow.class, "test123");
-        testWorkflow.run();
+        WorkflowClient.execute(testWorkflow::run);
+
+
+        TestWorkflow2 testWorkflow2 = workflowBuilder.build(TestWorkflow2.class, "test456");
+        WorkflowClient.execute(testWorkflow2::test);
+
         return "workfow started";
     }
 }

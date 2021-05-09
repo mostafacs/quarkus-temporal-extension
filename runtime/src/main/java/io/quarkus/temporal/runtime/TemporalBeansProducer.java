@@ -51,9 +51,9 @@ public class TemporalBeansProducer {
             for(String clazzName : classNames) {
                 Class clazz = classLoader.loadClass(clazzName);
                 activities[c]=Arc.container().select(clazz).get();
-                for(Class interfacei : clazz.getInterfaces()) {
+                for(Class interfacei : activities[c].getClass().getInterfaces()) {
                     if(interfacei.isAnnotationPresent(ActivityInterface.class)) {
-                        TemporalActivity ta = (TemporalActivity) clazz.getAnnotation(TemporalActivity.class);
+                        TemporalActivity ta = activities[c].getClass().getAnnotation(TemporalActivity.class);
                         workflowRuntimeBuildItem.putActivityInterfaceInfo(interfacei, queue, ta.name());
                         break;
                     }

@@ -35,7 +35,11 @@ public final class WorkflowRuntimeBuildItem {
 
     }
 
-    public void addActivityImpl(String queue, String clazz) {
+    public void addActivityImpl(String clazz) {
+        activitiesFlat.add(clazz);
+    }
+
+    public void addActivityInterface(String queue, String clazz) {
         if(activities.containsKey(queue)) {
             activities.get(queue).add(clazz);
         } else {
@@ -43,7 +47,6 @@ public final class WorkflowRuntimeBuildItem {
             a.add(clazz);
             activities.put(queue, a);
         }
-        activitiesFlat.add(clazz);
     }
 
     public void addWorkflowImpl(String queue, String clazz) {

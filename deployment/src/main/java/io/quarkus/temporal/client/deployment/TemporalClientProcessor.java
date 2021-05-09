@@ -15,6 +15,7 @@ import io.quarkus.temporal.runtime.TemporalRecorder;
 import io.quarkus.temporal.runtime.TemporalRequestScopeInterceptor;
 import io.quarkus.temporal.runtime.WorkflowRuntimeBuildItem;
 import io.quarkus.temporal.runtime.annotations.TemporalActivity;
+import io.quarkus.temporal.runtime.annotations.TemporalActivityStub;
 import io.quarkus.temporal.runtime.annotations.TemporalWorkflow;
 import io.quarkus.temporal.runtime.builder.ActivityBuilder;
 import io.quarkus.temporal.runtime.builder.WorkflowBuilder;
@@ -25,9 +26,8 @@ import org.jboss.jandex.DotName;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Singleton;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @Author Mostafa Albana
@@ -68,19 +68,28 @@ class TemporalClientProcessor {
         for (AnnotationInstance ai : combinedIndex.getIndex()
                 .getAnnotations(DotName.createSimple(TemporalActivity.class.getName()))) {
 
-            AnnotationValue[] queuesAnnValues = (AnnotationValue[]) ai.value("queue").value();
             String activityClassName = ai.target().asClass().name().toString();
-            for(AnnotationValue queueValue : queuesAnnValues) {
-                wrbi.addActivityImpl(queueValue.value().toString(), activityClassName);
-            }
+            wrbi.addActivityImpl(activityClassName);
         }
 
+        Map<String, String> workfowImplToQueue = new HashMap<>();
         for (AnnotationInstance ai : combinedIndex.getIndex()
                 .getAnnotations(DotName.createSimple(TemporalWorkflow.class.getName()))) {
 
             AnnotationValue queueValue = ai.value("queue");
             String wfClassName = ai.target().asClass().name().toString();
             wrbi.addWorkflowImpl(queueValue.value().toString(), wfClassName);
+            workfowImplToQueue.put(wfClassName, queueValue.value().toString());
+        }
+
+        for (AnnotationInstance ai : combinedIndex.getIndex()
+                .getAnnotations(DotName.createSimple(TemporalActivityStub.class.getName()))) {
+
+            String wfClassName = ai.target().asField().declaringClass().name().toString();
+            String activityInterface = ai.target().asField().type().toString();
+            System.out.println(wfClassName);
+            String queue = workfowImplToQueue.get(wfClassName);
+            wrbi.addActivityInterface(queue, activityInterface);
         }
 
         SyntheticBeanBuildItem runtimeConfigBuildItem = SyntheticBeanBuildItem.configure(WorkflowRuntimeBuildItem.class)

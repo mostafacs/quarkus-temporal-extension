@@ -5,7 +5,7 @@
   <parent>
     <groupId>io.quarkus</groupId>
     <artifactId>temporal-client-parent</artifactId>
-    <version>1.13.1.FINAL</version>
+    <version>1.13.1.Final</version>
   </parent>
   <artifactId>temporal-client-deployment</artifactId>
   <name>Temporal Client - Deployment</name>
