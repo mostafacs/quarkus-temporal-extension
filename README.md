@@ -17,7 +17,7 @@ With this extension you can easily implement a temporal workflow in your quarkus
 * Field `name` in annotation `@TemporalWorkflow` used to load workflow configurations 
 * Field `name` in annotation `@TemporalActivity` used to load activities configurations
 
-####Example
+#### Example
 ```aidl
 test:
   executionTimeout: 2
