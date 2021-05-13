@@ -2,8 +2,10 @@ package io.quarkus.temporal.runtime;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public final class WorkflowRuntimeBuildItem {
 
@@ -20,7 +22,7 @@ public final class WorkflowRuntimeBuildItem {
         public String name;
         public String queue;
     }
-    private Map<String, List<String>> activities = new HashMap<>();
+    private Map<String, Set<String>> activities = new HashMap<>();
 
     private Map<String, List<String>> workflows = new HashMap<>();
 
@@ -43,7 +45,7 @@ public final class WorkflowRuntimeBuildItem {
         if(activities.containsKey(queue)) {
             activities.get(queue).add(clazz);
         } else {
-            ArrayList a = new ArrayList();
+            Set a = new HashSet();
             a.add(clazz);
             activities.put(queue, a);
         }
@@ -94,11 +96,11 @@ public final class WorkflowRuntimeBuildItem {
         return activityToQueue.get(activityInterface).queue;
     }
 
-    public Map<String, List<String>> getActivities() {
+    public Map<String, Set<String>> getActivities() {
         return activities;
     }
 
-    public void setActivities(Map<String, List<String>> activities) {
+    public void setActivities(Map<String, Set<String>> activities) {
         this.activities = activities;
     }
 

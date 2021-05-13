@@ -19,6 +19,7 @@ import javax.enterprise.inject.Produces;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class TemporalBeansProducer {
 
@@ -43,9 +44,9 @@ public class TemporalBeansProducer {
 
         WorkerFactory factory =  WorkerFactory.newInstance(workflowClient);
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        for (Map.Entry<String, List<String>> entry : workflowRuntimeBuildItem.getActivities().entrySet()) {
+        for (Map.Entry<String, Set<String>> entry : workflowRuntimeBuildItem.getActivities().entrySet()) {
             String queue = entry.getKey();
-            List<String> classNames = entry.getValue();
+            Set<String> classNames = entry.getValue();
             Object[] activities = new Object[classNames.size()];
             int c=0;
             for(String clazzName : classNames) {
