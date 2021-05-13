@@ -2,7 +2,7 @@ package io.quarkus.temporal.client.it.workflow;
 
 import io.quarkus.temporal.runtime.annotations.TemporalActivity;
 
-@TemporalActivity//(queue = {"testQueue", "secondQueue"})
+@TemporalActivity(name = "test")
 public class TestActivityImpl implements TestActivity {
 
     @Override

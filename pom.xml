@@ -7,6 +7,23 @@
   <version>1.13.1.Final</version>
   <packaging>pom</packaging>
   <name>Temporal Client - Parent</name>
+
+
+  <description>Quarkus extension for temporal engine</description>
+  <url>https://github.com/mostafacs/quarkus-temporal-extension</url>
+
+  <licenses>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <scm>
+    <url>https://github.com/mostafacs/quarkus-temporal-extension.git</url>
+  </scm>
+
   <modules>
     <module>deployment</module>
     <module>runtime</module>

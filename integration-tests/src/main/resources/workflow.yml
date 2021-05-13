@@ -1,2 +1,13 @@
-Test:
-  executionTimeout: 60
+test:
+  executionTimeout: 2
+  runTimeout: 2
+  taskTimeout: 2
+  activities:
+    test:
+      scheduleTostartTimeout: 10
+      scheduleTocloseTimeout: 10
+      startTocloseTimeout: 20
+      heartbeatTimeout: 2
+      retryInitInterval: 1
+      retryMaxInterval: 1
+      retryMaxAttempts: 1
