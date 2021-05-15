@@ -3,36 +3,67 @@ package io.quarkus.temporal.runtime.config;
 import io.quarkus.temporal.runtime.WorkflowRuntimeBuildItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.inject.Inject;
 import java.time.Duration;
+import java.util.HashMap;
 import java.util.Map;
 
 
 public class WorkflowConfigurations {
 
-    private static final Long DEFAULT_WF_EXEC_TIMEOUT = 60l;
-    private static final Long DEFAULT_WF_RUN_TIMEOUT = 60l;
-    private static final Long DEFAULT_WF_TASK_TIMEOUT = 60l;
+    private final Long DEFAULT_WF_EXEC_TIMEOUT; // = 60l; // minutes
+    private final Long DEFAULT_WF_RUN_TIMEOUT; // = 60l; // minutes
+    private final Long DEFAULT_WF_TASK_TIMEOUT; // = 60l; // minutes
 
-    private static final Long DEFAULT_ACTIVITY_SCHEDULE_TO_START_TIMEOUT = 60l;
-    private static final Long DEFAULT_ACTIVITY_SCHEDULE_TO_CLOSE_TIMEOUT = 60l;
-    private static final Long DEFAULT_ACTIVITY_START_TO_CLOSE_TIMEOUT = 60l;
+    private final Long DEFAULT_ACTIVITY_SCHEDULE_TO_START_TIMEOUT; // = 60l; // minutes
+    private final Long DEFAULT_ACTIVITY_SCHEDULE_TO_CLOSE_TIMEOUT; // = 60l; // minutes
+    private final Long DEFAULT_ACTIVITY_START_TO_CLOSE_TIMEOUT; // = 60l;
     // heartbeat timeout must be shorter than START_TO_CLOSE timeout
-    private static final Long DEFAULT_ACTIVITY_HEARTBEAT_TIMEOUT = 5l; // minutes
-    private static final Long DEFAULT_ACTIVITY_RETRY_INIT_INTERVAL = 1l;
-    private static final Long DEFAULT_ACTIVITY_RETRY_MAX_INTERVAL = 1l;
-    private static final Double DEFAULT_ACTIVITY_RETRY_BACKOFF_COEFFICIENT = 1.0;
-    private static final Integer DEFAULT_ACTIVITY_RETRY_MAX_Attempts = 1;
+    private final Long DEFAULT_ACTIVITY_HEARTBEAT_TIMEOUT; // = 5l; // minutes
+    private final Long DEFAULT_ACTIVITY_RETRY_INIT_INTERVAL; // = 1l; // minutes
+    private final Long DEFAULT_ACTIVITY_RETRY_MAX_INTERVAL;; // = 1l; // minutes
+    private final Double DEFAULT_ACTIVITY_RETRY_BACKOFF_COEFFICIENT; // = 1.0; // double
+    private final Integer DEFAULT_ACTIVITY_RETRY_MAX_Attempts; // = 1; // retry count
 
     // private String default
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    TemporalConfig temporalConfig;
     Map<String, WorkflowConfig> workflows;
-
     
-    public WorkflowConfigurations(Map<String, WorkflowConfig> workflows){
-        this.workflows = workflows;
+    public WorkflowConfigurations(TemporalConfig temporalConfig){
+        if(temporalConfig.getWorkflows() != null) {
+            this.workflows = temporalConfig.getWorkflows();
+        } else {
+            this.workflows = new HashMap<>();
+        }
+
+        if(temporalConfig.getDefaults() == null) {
+            temporalConfig.setDefaults(new DefaultConfig());
+        }
+        DefaultConfig defaults = temporalConfig.getDefaults();
+        this.DEFAULT_WF_EXEC_TIMEOUT = defaults.getWorkflowExecutionTimeout() != null ? defaults.getWorkflowExecutionTimeout() : 60l;
+        this.DEFAULT_WF_RUN_TIMEOUT = defaults.getWorkflowRunTimeout() != null ? defaults.getWorkflowRunTimeout() : 60l;
+        this.DEFAULT_WF_TASK_TIMEOUT = defaults.getWorkflowTaskTimeout() != null ? defaults.getWorkflowTaskTimeout() : 60l;
+
+
+        this.DEFAULT_ACTIVITY_SCHEDULE_TO_START_TIMEOUT = defaults.getActivityScheduleToStartTimeout() != null ?
+                defaults.getActivityScheduleToStartTimeout() : 60l;
+        this.DEFAULT_ACTIVITY_SCHEDULE_TO_CLOSE_TIMEOUT = defaults.getActivityScheduleToCloseTimeout() != null ?
+                defaults.getActivityScheduleToCloseTimeout() : 60l;
+        this.DEFAULT_ACTIVITY_START_TO_CLOSE_TIMEOUT = defaults.getActivityStartToCloseTimeout() != null ?
+                defaults.getActivityStartToCloseTimeout() : 60l;
+
+        this.DEFAULT_ACTIVITY_HEARTBEAT_TIMEOUT = defaults.getActivityHeartBeatTimeout() != null ?
+                defaults.getActivityHeartBeatTimeout() : 5l;
+
+        this.DEFAULT_ACTIVITY_RETRY_INIT_INTERVAL = defaults.getActivityRetryInitInterval() != null ?
+                defaults.getActivityRetryInitInterval() : 1l;
+        this.DEFAULT_ACTIVITY_RETRY_MAX_INTERVAL = defaults.getActivityRetryMaxInterval() != null ?
+                defaults.getActivityRetryMaxInterval() : 1l;
+        this.DEFAULT_ACTIVITY_RETRY_BACKOFF_COEFFICIENT = defaults.getActivityRetryBackOffCoefficient() != null ?
+                defaults.getActivityRetryBackOffCoefficient() : 1.0;
+        this.DEFAULT_ACTIVITY_RETRY_MAX_Attempts = defaults.getActivityRetryMaxAttempts() != null ?
+                defaults.getActivityRetryMaxAttempts() : 1;
     }
 
     public Duration workflowExecutionTimeout(Class workflow) {

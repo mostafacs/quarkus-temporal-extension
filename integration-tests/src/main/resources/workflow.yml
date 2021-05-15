@@ -1,13 +1,20 @@
-test:
-  executionTimeout: 2
-  runTimeout: 2
-  taskTimeout: 2
-  activities:
-    test:
-      scheduleTostartTimeout: 10
-      scheduleTocloseTimeout: 10
-      startTocloseTimeout: 20
-      heartbeatTimeout: 2
-      retryInitInterval: 1
-      retryMaxInterval: 1
-      retryMaxAttempts: 1
+defaults:
+  workflowExecutionTimeout: 20
+  workflowRunTimeout: 15
+  workflowTaskTimeout: 14
+  activityRetryMaxAttempts: 5
+  
+workflows:
+  test:
+    executionTimeout: 2
+    runTimeout: 2
+    taskTimeout: 2
+    activities:
+      test:
+        scheduleTostartTimeout: 10
+        scheduleTocloseTimeout: 10
+        #startTocloseTimeout: 20
+        #heartbeatTimeout: 2
+        #retryInitInterval: 1
+        #retryMaxInterval: 1
+        #retryMaxAttempts: 1

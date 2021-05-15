@@ -87,7 +87,6 @@ class TemporalClientProcessor {
 
             String wfClassName = ai.target().asField().declaringClass().name().toString();
             String activityInterface = ai.target().asField().type().toString();
-            System.out.println(wfClassName);
             String queue = workfowImplToQueue.get(wfClassName);
             wrbi.addActivityInterface(queue, activityInterface);
         }

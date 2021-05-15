@@ -5,13 +5,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import io.quarkus.runtime.RuntimeValue;
 import io.quarkus.runtime.annotations.Recorder;
+import io.quarkus.temporal.runtime.config.TemporalConfig;
 import io.quarkus.temporal.runtime.config.WorkflowConfig;
 import io.quarkus.temporal.runtime.config.WorkflowConfigurations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,12 +24,12 @@ public class TemporalRecorder {
 
     public RuntimeValue<WorkflowConfigurations> createWorkflowConfigs() throws Exception{
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-        Map<String, WorkflowConfig> configs = new HashMap<>();
+        TemporalConfig temporalConfig = new TemporalConfig();
         InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(WORKFLOWS_FILE_CONFIG);
         if(is != null) {
-            configs = mapper.readValue(is, new TypeReference<Map<String, WorkflowConfig>>() {});
+            temporalConfig = mapper.readValue(is, new TypeReference<TemporalConfig>() {});
         }
-        return new RuntimeValue<>(new WorkflowConfigurations(configs));
+        return new RuntimeValue<>(new WorkflowConfigurations(temporalConfig));
     }
 
 
