@@ -24,7 +24,7 @@
     <connection>scm:git:git://github.com/mostafacs/quarkus-temporal-extension.git</connection>
     <developerConnection>scm:git:git@github.com:mostafacs/quarkus-temporal-extension.git</developerConnection>
     <url>https://github.com/mostafacs/quarkus-temporal-extension.git</url>
-    <tag>HEAD</tag>
+    <tag>temporal-client-0</tag>
   </scm>
 
   <distributionManagement>
