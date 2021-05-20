@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.sellware.quarkus-temporal</groupId>
   <artifactId>temporal-client-parent</artifactId>
-  <version>1.11.0.0.SNAPSHOT</version>
+  <version>1.11.0.2</version>
   <packaging>pom</packaging>
   <name>Temporal Client - Parent</name>
 
@@ -29,7 +29,7 @@
     <connection>scm:git:git://github.com/mostafacs/quarkus-temporal-extension.git</connection>
     <developerConnection>scm:git:git@github.com:mostafacs/quarkus-temporal-extension.git</developerConnection>
     <url>https://github.com/mostafacs/quarkus-temporal-extension.git</url>
-    <tag>HEAD</tag>
+    <tag>1</tag>
   </scm>
 
   <distributionManagement>
