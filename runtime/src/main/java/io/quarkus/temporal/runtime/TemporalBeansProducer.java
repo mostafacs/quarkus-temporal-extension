@@ -21,6 +21,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Define necessory Arc Beans
+ */
 public class TemporalBeansProducer {
 
     @Produces

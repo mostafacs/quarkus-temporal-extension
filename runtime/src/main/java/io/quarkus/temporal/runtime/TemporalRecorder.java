@@ -6,15 +6,14 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import io.quarkus.runtime.RuntimeValue;
 import io.quarkus.runtime.annotations.Recorder;
 import io.quarkus.temporal.runtime.config.TemporalConfig;
-import io.quarkus.temporal.runtime.config.WorkflowConfig;
 import io.quarkus.temporal.runtime.config.WorkflowConfigurations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
 
-
+/**
+ * Recorder handle bytecode filling during build
+ */
 @Recorder
 public class TemporalRecorder {
 
