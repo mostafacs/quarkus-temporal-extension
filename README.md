@@ -7,9 +7,9 @@ With this extension you can easily implement a temporal workflow in your quarkus
 1- Add extension dependency to your maven POM file.
  ```aidl
         <dependency>
-            <groupId>io.quarkus</groupId>
+            <groupId>com.sellware.quarkus-temporal</groupId>
             <artifactId>temporal-client</artifactId>
-            <version>${quarkus.version}</version>
+            <version>1.11.0.7</version>
         </dependency>
 ```
 
@@ -19,19 +19,36 @@ With this extension you can easily implement a temporal workflow in your quarkus
 
 #### Example
 ```aidl
-test:
-  executionTimeout: 2
-  runTimeout: 2
-  taskTimeout: 2
-  activities:
-    test:
-      scheduleTostartTimeout: 10
-      scheduleTocloseTimeout: 10
-      startTocloseTimeout: 20
-      heartbeatTimeout: 2
-      retryInitInterval: 1
-      retryMaxInterval: 1
-      retryMaxAttempts: 1
+defaults:
+  workflowExecutionTimeout: 20 # in minutes default is 60 minute if not set
+  workflowRunTimeout: 15 # in minutes default is 60 minute
+  workflowTaskTimeout: 14 # in minutes default is 60 minute
+
+  activityScheduleToStartTimeout: 60 # in minutes default is 60 minute
+  activityScheduleToCloseTimeout: 60 # in minutes default is 60 minute
+  activityStartToCloseTimeout: 60 # in minutes default is 60 minute
+  #heartbeat timeout must be shorter than START_TO_CLOSE timeout
+  activityHeartBeatTimeout: 5 # in minutes default is 60 minute
+  activityRetryInitInterval: 1 # in minutes default is 5 minute
+  activityRetryMaxInterval: 1 # in minutes default is 1 minute if not set
+  activityRetryBackOffCoefficient: 1.0  # default is 1.0
+  activityRetryMaxAttempts: 5  # default is 1 attempt
+
+# override defaults per workflow
+workflows:
+  test:
+    executionTimeout: 2
+    runTimeout: 2
+    taskTimeout: 2
+    activities:
+      test:
+        scheduleTostartTimeout: 10
+        scheduleTocloseTimeout: 10
+        #startTocloseTimeout: 20
+        #heartbeatTimeout: 2
+        #retryInitInterval: 1
+        #retryMaxInterval: 1
+        #retryMaxAttempts: 1
 ```
 
 ### Declare your Temporal Activities:
