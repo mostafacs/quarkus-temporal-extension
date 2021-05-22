@@ -9,7 +9,7 @@ With this extension you can easily implement a temporal workflow in your quarkus
         <dependency>
             <groupId>com.sellware.quarkus-temporal</groupId>
             <artifactId>temporal-client</artifactId>
-            <version>1.11.0.7</version>
+            <version>1.13.1.7</version>
         </dependency>
 ```
 
