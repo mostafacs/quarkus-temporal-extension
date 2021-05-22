@@ -4,7 +4,7 @@
   <parent>
     <groupId>com.sellware.quarkus-temporal</groupId>
     <artifactId>temporal-client-parent</artifactId>
-    <version>1.13.1.7-SNAPSHOT</version>
+    <version>1.13.1.7</version>
   </parent>
   <artifactId>temporal-client-integration-tests</artifactId>
   <name>Temporal Client - Integration Tests</name>
