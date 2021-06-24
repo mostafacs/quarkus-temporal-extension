@@ -5,7 +5,7 @@ With this extension you can easily implement a temporal workflow in your quarkus
 ## How to use ?
 
 1- Add extension dependency to your maven POM file.
- ```yaml
+ ```xml
         <dependency>
             <groupId>com.sellware.quarkus-temporal</groupId>
             <artifactId>temporal-client</artifactId>
@@ -53,7 +53,7 @@ workflows:
 
 ### Declare your Temporal Activities:
 
-```aidl
+```java
     @ActivityInterface
     public interface TestActivity {
     
@@ -61,7 +61,7 @@ workflows:
     }
 ```
 
-```aidl
+```java
     // name used to get the activity configurations from workflow.yml
     @TemporalActivity(name="test")
     public class TestActivityImpl implements TestActivity {
@@ -76,7 +76,7 @@ workflows:
 ```
 
 ### Declare your Temporal Workflows:
-```aidl
+```java
     @WorkflowInterface
     public interface TestWorkflow {
     
@@ -85,7 +85,7 @@ workflows:
     }
 ```
 
-```aidl
+```java
     @TemporalWorkflow(queue = "testQueue", name="test")
     public class TestWorkflowImpl implements TestWorkflow {
     
@@ -103,7 +103,7 @@ workflows:
 
 ### Run your workflow:
 
-```aidl
+```java
 
     @Path("/temporal-client")
     @ApplicationScoped
