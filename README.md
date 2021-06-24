@@ -5,7 +5,7 @@ With this extension you can easily implement a temporal workflow in your quarkus
 ## How to use ?
 
 1- Add extension dependency to your maven POM file.
- ```aidl
+ ```yaml
         <dependency>
             <groupId>com.sellware.quarkus-temporal</groupId>
             <artifactId>temporal-client</artifactId>
@@ -18,7 +18,7 @@ With this extension you can easily implement a temporal workflow in your quarkus
 * Field `name` in annotation `@TemporalActivity` used to load activities configurations
 
 #### Example
-```aidl
+```yml
 defaults:
   workflowExecutionTimeout: 20 # in minutes default is 60 minute if not set
   workflowRunTimeout: 15 # in minutes default is 60 minute
