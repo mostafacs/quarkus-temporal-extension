@@ -25,7 +25,6 @@ import io.quarkus.temporal.client.it.workflow.TestWorkflow2;
 import io.quarkus.temporal.runtime.builder.WorkflowBuilder;
 import io.temporal.client.WorkflowClient;
 
-
 @Path("/temporal-client")
 @ApplicationScoped
 public class TemporalClientResource {
@@ -55,7 +54,6 @@ public class TemporalClientResource {
 
         TestWorkflow testWorkflow = workflowBuilder.build(TestWorkflow.class, "test123");
         WorkflowClient.execute(testWorkflow::run);
-
 
         TestWorkflow2 testWorkflow2 = workflowBuilder.build(TestWorkflow2.class, "test456");
         WorkflowClient.execute(testWorkflow2::test);
