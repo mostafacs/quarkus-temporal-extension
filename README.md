@@ -6,14 +6,35 @@ With this extension you can easily implement a temporal workflow in your quarkus
 
 1- Add extension dependency to your maven POM file.
  ```xml
-        <dependency>
-            <groupId>com.sellware.quarkus-temporal</groupId>
-            <artifactId>temporal-client</artifactId>
-            <version>1.13.1.7</version>
-        </dependency>
+<dependency>
+    <groupId>com.sellware.quarkus-temporal</groupId>
+    <artifactId>temporal-client</artifactId>
+    <version>2.0.0-SNAPSHOT</version>
+</dependency>
 ```
 
-2- Add configuration file named `workflow.yml` to resources folder
+2- Updated netty-shaded on quarkus-bom
+```xml
+ <dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-bom</artifactId>
+            <version>${quarkus.version}</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+        <!-- Only necessary while quarkus does not bump the netty-all lib. -->
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-netty-shaded</artifactId>
+            <version>1.39.0</version>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+```
+
+3- Add configuration file named `workflow.yml` to resources folder
 * Field `name` in annotation `@TemporalWorkflow` used to load workflow configurations 
 * Field `name` in annotation `@TemporalActivity` used to load activities configurations
 
