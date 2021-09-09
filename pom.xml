@@ -36,6 +36,12 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <!-- just necessary when quarkus < 2.3 -->
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-netty-shaded</artifactId>
+                <version>1.39.0</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <build>
