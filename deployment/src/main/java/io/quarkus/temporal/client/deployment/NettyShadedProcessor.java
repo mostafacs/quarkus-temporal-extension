@@ -1,4 +1,5 @@
-package io.quarkus.temporal.client.deployment;
+package io.quarkus.temporal.client.deployment        //TODO: temporal workflow need register here?
+;
 
 import io.grpc.NameResolverProvider;
 import io.grpc.internal.DnsNameResolverProvider;
@@ -33,7 +34,7 @@ public class NettyShadedProcessor {
     }
 
     @BuildStep
-    void registerReflectClasses(BuildProducer<ReflectiveClassBuildItem> reflections, CombinedIndexBuildItem combinedIndex) {
+    void registerReflecttionsNettyShaded(BuildProducer<ReflectiveClassBuildItem> reflections, CombinedIndexBuildItem combinedIndex) {
         ReflectiveClassBuildItem buildItem = new ReflectiveClassBuildItem(true, true, true,
                 "io.grpc.netty.shaded.io.netty.channel.socket.nio.NioSocketChannel",
                 "io.grpc.netty.shaded.io.netty.util.internal.NativeLibraryUtil",
@@ -72,12 +73,11 @@ public class NettyShadedProcessor {
 
     @BuildStep
     void addNativeResourceForNettyShaded(BuildProducer<NativeImageResourceDirectoryBuildItem> resourceBuildItem) {
-        //TODO: adds just native props
         resourceBuildItem.produce(new NativeImageResourceDirectoryBuildItem("META-INF"));
     }
 
     @BuildStep
-    void runtimeInitializeDriver(BuildProducer<RuntimeInitializedClassBuildItem> runtimeInitialized,
+    void runTimeInitializationForNettyShaded(BuildProducer<RuntimeInitializedClassBuildItem> runtimeInitialized,
                                  BuildProducer<RuntimeInitializedPackageBuildItem> runtimePackages) {
         runtimeInitialized.produce(new RuntimeInitializedClassBuildItem("io.grpc.netty.shaded.io.netty.handler.ssl.OpenSsl"));
         runtimeInitialized.produce(new RuntimeInitializedClassBuildItem("io.grpc.netty.shaded.io.netty.handler.ssl.OpenSslContext"));

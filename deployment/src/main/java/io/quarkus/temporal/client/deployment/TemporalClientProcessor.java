@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * @Author Mostafa Albana
+ * @author Mostafa Albana, netodevel
  */
 class TemporalClientProcessor {
 
@@ -69,7 +69,6 @@ class TemporalClientProcessor {
         WorkflowRuntimeBuildItem wrbi = new WorkflowRuntimeBuildItem();
 
         for (AnnotationInstance ai : combinedIndex.getIndex().getAnnotations(DotName.createSimple(TemporalActivity.class.getName()))) {
-
             String activityClassName = ai.target().asClass().name().toString();
             wrbi.addActivityImpl(activityClassName);
         }
@@ -106,48 +105,41 @@ class TemporalClientProcessor {
     void temporalReflections(BuildProducer<ReflectiveClassBuildItem> reflections, CombinedIndexBuildItem combinedIndex) {
         for (AnnotationInstance ai : combinedIndex.getIndex().getAnnotations(DotName.createSimple(ActivityInterface.class.getName()))) {
             String activityClassName = ai.target().asClass().name().toString();
-            System.out.println("activity_interface: " + activityClassName);
             reflections.produce(new ReflectiveClassBuildItem(true, true, true, activityClassName));
         }
 
         for (AnnotationInstance ai : combinedIndex.getIndex().getAnnotations(DotName.createSimple(WorkflowInterface.class.getName()))) {
             String activityClassName = ai.target().asClass().name().toString();
-            System.out.println("workflow_interface" + activityClassName);
             reflections.produce(new ReflectiveClassBuildItem(true, true, true, activityClassName));
         }
 
         for (AnnotationInstance ai : combinedIndex.getIndex().getAnnotations(DotName.createSimple(TemporalActivity.class.getName()))) {
             String activityClassName = ai.target().asClass().name().toString();
-            System.out.println("workflow_interface" + activityClassName);
             reflections.produce(new ReflectiveClassBuildItem(true, true, true, activityClassName));
         }
 
         for (AnnotationInstance ai : combinedIndex.getIndex().getAnnotations(DotName.createSimple(TemporalWorkflow.class.getName()))) {
             String activityClassName = ai.target().asClass().name().toString();
-            System.out.println("workflow_interface" + activityClassName);
             reflections.produce(new ReflectiveClassBuildItem(true, true, true, activityClassName));
         }
     }
 
     @BuildStep
-    void httpProxies(BuildProducer<NativeImageProxyDefinitionBuildItem> proxies, CombinedIndexBuildItem combinedIndex) {
+    void configureProxies(BuildProducer<NativeImageProxyDefinitionBuildItem> proxies, CombinedIndexBuildItem combinedIndex) {
         // proxies to async internal
         List<String> proxysToAsyncInternal = new ArrayList<>();
         for (AnnotationInstance ai : combinedIndex.getIndex().getAnnotations(DotName.createSimple(ActivityInterface.class.getName()))) {
             String activityClassName = ai.target().asClass().name().toString();
-            System.out.println("proxy_config - activity_interface: " + activityClassName);
             proxysToAsyncInternal.add(activityClassName);
         }
 
         proxysToAsyncInternal.add("io.temporal.internal.sync.AsyncInternal$AsyncMarker");
-        System.out.println(proxysToAsyncInternal.toString());
         proxies.produce(new NativeImageProxyDefinitionBuildItem(proxysToAsyncInternal));
 
         // proxies to StubMarker
         List<String> proxiesToStubMarker = new ArrayList<>();
         for (AnnotationInstance ai : combinedIndex.getIndex().getAnnotations(DotName.createSimple(WorkflowInterface.class.getName()))) {
             String activityClassName = ai.target().asClass().name().toString();
-            System.out.println("proxy_config - workflow_interface" + activityClassName);
             proxiesToStubMarker.add(activityClassName);
         }
         proxiesToStubMarker.add("io.temporal.internal.sync.StubMarker");
@@ -160,8 +152,6 @@ class TemporalClientProcessor {
         // app classes
         proxies.produce(new NativeImageProxyDefinitionBuildItem(proxiesToStubMarker.stream().filter(p -> !p.equalsIgnoreCase("io.temporal.internal.sync.StubMarker")).collect(Collectors.toList())));
         proxies.produce(new NativeImageProxyDefinitionBuildItem(proxysToAsyncInternal.stream().filter(p -> !p.equalsIgnoreCase("io.temporal.internal.sync.AsyncInternal$AsyncMarker")).collect(Collectors.toList())));
-
-        //TODO: temporal workflow need register here?
     }
 
     @BuildStep
