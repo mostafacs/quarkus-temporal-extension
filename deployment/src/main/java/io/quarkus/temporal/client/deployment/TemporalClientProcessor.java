@@ -9,28 +9,31 @@ import io.quarkus.deployment.annotations.Record;
 import io.quarkus.deployment.builditem.AdditionalApplicationArchiveMarkerBuildItem;
 import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
-import io.quarkus.temporal.runtime.GenericSupplier;
-import io.quarkus.temporal.runtime.TemporalBeansProducer;
-import io.quarkus.temporal.runtime.TemporalRecorder;
-import io.quarkus.temporal.runtime.TemporalRequestScopeInterceptor;
-import io.quarkus.temporal.runtime.WorkflowRuntimeBuildItem;
+import io.quarkus.deployment.builditem.nativeimage.NativeImageProxyDefinitionBuildItem;
+import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
+import io.quarkus.temporal.runtime.*;
 import io.quarkus.temporal.runtime.annotations.TemporalActivity;
 import io.quarkus.temporal.runtime.annotations.TemporalActivityStub;
 import io.quarkus.temporal.runtime.annotations.TemporalWorkflow;
 import io.quarkus.temporal.runtime.builder.ActivityBuilder;
 import io.quarkus.temporal.runtime.builder.WorkflowBuilder;
 import io.quarkus.temporal.runtime.config.WorkflowConfigurations;
+import io.temporal.activity.ActivityInterface;
+import io.temporal.workflow.WorkflowInterface;
 import org.jboss.jandex.AnnotationInstance;
 import org.jboss.jandex.AnnotationValue;
 import org.jboss.jandex.DotName;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Singleton;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
- * @Author Mostafa Albana
+ * @author Mostafa Albana, netodevel
  */
 class TemporalClientProcessor {
 
@@ -65,9 +68,7 @@ class TemporalClientProcessor {
 
         WorkflowRuntimeBuildItem wrbi = new WorkflowRuntimeBuildItem();
 
-        for (AnnotationInstance ai : combinedIndex.getIndex()
-                .getAnnotations(DotName.createSimple(TemporalActivity.class.getName()))) {
-
+        for (AnnotationInstance ai : combinedIndex.getIndex().getAnnotations(DotName.createSimple(TemporalActivity.class.getName()))) {
             String activityClassName = ai.target().asClass().name().toString();
             wrbi.addActivityImpl(activityClassName);
         }
@@ -98,6 +99,59 @@ class TemporalClientProcessor {
         syntheticBeanBuildItemBuildProducer.produce(runtimeConfigBuildItem);
 
         return new WorkflowBuildItem(wrbi);
+    }
+
+    @BuildStep
+    void temporalReflections(BuildProducer<ReflectiveClassBuildItem> reflections, CombinedIndexBuildItem combinedIndex) {
+        for (AnnotationInstance ai : combinedIndex.getIndex().getAnnotations(DotName.createSimple(ActivityInterface.class.getName()))) {
+            String activityClassName = ai.target().asClass().name().toString();
+            reflections.produce(new ReflectiveClassBuildItem(true, true, true, activityClassName));
+        }
+
+        for (AnnotationInstance ai : combinedIndex.getIndex().getAnnotations(DotName.createSimple(WorkflowInterface.class.getName()))) {
+            String activityClassName = ai.target().asClass().name().toString();
+            reflections.produce(new ReflectiveClassBuildItem(true, true, true, activityClassName));
+        }
+
+        for (AnnotationInstance ai : combinedIndex.getIndex().getAnnotations(DotName.createSimple(TemporalActivity.class.getName()))) {
+            String activityClassName = ai.target().asClass().name().toString();
+            reflections.produce(new ReflectiveClassBuildItem(true, true, true, activityClassName));
+        }
+
+        for (AnnotationInstance ai : combinedIndex.getIndex().getAnnotations(DotName.createSimple(TemporalWorkflow.class.getName()))) {
+            String activityClassName = ai.target().asClass().name().toString();
+            reflections.produce(new ReflectiveClassBuildItem(true, true, true, activityClassName));
+        }
+    }
+
+    @BuildStep
+    void configureProxies(BuildProducer<NativeImageProxyDefinitionBuildItem> proxies, CombinedIndexBuildItem combinedIndex) {
+        // proxies to async internal
+        List<String> proxysToAsyncInternal = new ArrayList<>();
+        for (AnnotationInstance ai : combinedIndex.getIndex().getAnnotations(DotName.createSimple(ActivityInterface.class.getName()))) {
+            String activityClassName = ai.target().asClass().name().toString();
+            proxysToAsyncInternal.add(activityClassName);
+        }
+
+        proxysToAsyncInternal.add("io.temporal.internal.sync.AsyncInternal$AsyncMarker");
+        proxies.produce(new NativeImageProxyDefinitionBuildItem(proxysToAsyncInternal));
+
+        // proxies to StubMarker
+        List<String> proxiesToStubMarker = new ArrayList<>();
+        for (AnnotationInstance ai : combinedIndex.getIndex().getAnnotations(DotName.createSimple(WorkflowInterface.class.getName()))) {
+            String activityClassName = ai.target().asClass().name().toString();
+            proxiesToStubMarker.add(activityClassName);
+        }
+        proxiesToStubMarker.add("io.temporal.internal.sync.StubMarker");
+        proxies.produce(new NativeImageProxyDefinitionBuildItem(proxiesToStubMarker));
+
+        // temporal classes
+        proxies.produce(new NativeImageProxyDefinitionBuildItem("io.temporal.serviceclient.WorkflowServiceStubs"));
+        proxies.produce(new NativeImageProxyDefinitionBuildItem("io.temporal.client.WorkflowClient"));
+
+        // app classes
+        proxies.produce(new NativeImageProxyDefinitionBuildItem(proxiesToStubMarker.stream().filter(p -> !p.equalsIgnoreCase("io.temporal.internal.sync.StubMarker")).collect(Collectors.toList())));
+        proxies.produce(new NativeImageProxyDefinitionBuildItem(proxysToAsyncInternal.stream().filter(p -> !p.equalsIgnoreCase("io.temporal.internal.sync.AsyncInternal$AsyncMarker")).collect(Collectors.toList())));
     }
 
     @BuildStep
