@@ -5,13 +5,26 @@ With this extension you can easily implement a temporal workflow in your quarkus
 ## How to use ?
 
 1- Add extension dependency to your maven POM file.
+
+* Quarkus 2.x , JDK 11 and  Native Image Build Support 
  ```xml
 <dependency>
     <groupId>com.sellware.quarkus-temporal</groupId>
     <artifactId>temporal-client</artifactId>
-    <version>2.0.0-SNAPSHOT</version>
+    <version>2.0.0</version>
 </dependency>
 ```
+
+* Quarkus 1.x , JDK 8 ( Native image build not supported) 
+ ```xml
+<dependency>
+    <groupId>com.sellware.quarkus-temporal</groupId>
+    <artifactId>temporal-client</artifactId>
+    <version>1.13.1.7</version>
+</dependency>
+```
+
+
 
 2- Updated netty-shaded on quarkus-bom
 ```xml
