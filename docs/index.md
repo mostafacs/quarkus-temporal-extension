@@ -1,37 +1,157 @@
-## Welcome to GitHub Pages
+# QUARKUS - TEMPORAL EXTENSION
 
-You can use the [editor on GitHub](https://github.com/mostafacs/quarkus-temporal-extension/edit/main/docs/index.md) to maintain and preview the content for your website in Markdown files.
+With this extension you can easily implement a temporal workflow in your quarkus project.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+## How to use ?
 
-### Markdown
+1- Add extension dependency to your maven POM file.
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
-
-```markdown
-Syntax highlighted code block
-
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
+* Quarkus 2.x , JDK 11 and  Native Image Build Support 
+ ```xml
+<dependency>
+    <groupId>com.sellware.quarkus-temporal</groupId>
+    <artifactId>temporal-client</artifactId>
+    <version>2.0.0</version>
+</dependency>
 ```
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+* Quarkus 1.x , JDK 8 ( Native image build not supported) 
+ ```xml
+<dependency>
+    <groupId>com.sellware.quarkus-temporal</groupId>
+    <artifactId>temporal-client</artifactId>
+    <version>1.13.1.7</version>
+</dependency>
+```
 
-### Jekyll Themes
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/mostafacs/quarkus-temporal-extension/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
 
-### Support or Contact
+2- Updated netty-shaded on quarkus-bom
+```xml
+ <dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-bom</artifactId>
+            <version>${quarkus.version}</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+        <!-- Only necessary while quarkus does not bump the netty-all lib. -->
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-netty-shaded</artifactId>
+            <version>1.39.0</version>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+```
 
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+3- Add configuration file named `workflow.yml` to resources folder
+* Field `name` in annotation `@TemporalWorkflow` used to load workflow configurations 
+* Field `name` in annotation `@TemporalActivity` used to load activities configurations
+
+#### Example
+```yml
+defaults:
+  workflowExecutionTimeout: 20 # in minutes default is 60 minute if not set
+  workflowRunTimeout: 15 # in minutes default is 60 minute
+  workflowTaskTimeout: 14 # in minutes default is 60 minute
+
+  activityScheduleToStartTimeout: 60 # in minutes default is 60 minute
+  activityScheduleToCloseTimeout: 60 # in minutes default is 60 minute
+  activityStartToCloseTimeout: 60 # in minutes default is 60 minute
+  #heartbeat timeout must be shorter than START_TO_CLOSE timeout
+  activityHeartBeatTimeout: 5 # in minutes default is 60 minute
+  activityRetryInitInterval: 1 # in minutes default is 5 minute
+  activityRetryMaxInterval: 1 # in minutes default is 1 minute if not set
+  activityRetryBackOffCoefficient: 1.0  # default is 1.0
+  activityRetryMaxAttempts: 5  # default is 1 attempt
+
+# override defaults per workflow
+workflows:
+  test:
+    executionTimeout: 2
+    runTimeout: 2
+    taskTimeout: 2
+    activities:
+      test:
+        scheduleTostartTimeout: 10
+        scheduleTocloseTimeout: 10
+        #startTocloseTimeout: 20
+        #heartbeatTimeout: 2
+        #retryInitInterval: 1
+        #retryMaxInterval: 1
+        #retryMaxAttempts: 1
+```
+
+### Declare your Temporal Activities:
+
+```java
+    @ActivityInterface
+    public interface TestActivity {
+    
+        String hello();
+    }
+```
+
+```java
+    // name used to get the activity configurations from workflow.yml
+    @TemporalActivity(name="test")
+    public class TestActivityImpl implements TestActivity {
+    
+        // you can inject your services here.
+ 
+        @Override
+        public String hello() {
+            return "I'm hello activity";
+        }
+    }
+```
+
+### Declare your Temporal Workflows:
+```java
+    @WorkflowInterface
+    public interface TestWorkflow {
+    
+        @WorkflowMethod
+        void run();
+    }
+```
+
+```java
+    @TemporalWorkflow(queue = "testQueue", name="test")
+    public class TestWorkflowImpl implements TestWorkflow {
+    
+        @TemporalActivityStub
+        TestActivity testActivity;
+    
+        @Override
+        public void run() {
+            System.out.println(testActivity.hello());
+            Workflow.sleep(10000);
+            System.out.println("Workflow <<1>> completed");
+        }
+    }
+```
+
+### Run your workflow:
+
+```java
+
+    @Path("/temporal-client")
+    @ApplicationScoped
+    public class TemporalClientController {
+    
+        @Inject
+        WorkflowBuilder workflowBuilder;
+    
+        @GET
+        public String hello() {
+            TestWorkflow testWorkflow = workflowBuilder.build(TestWorkflow.class, "test123");
+            WorkflowClient.execute(testWorkflow::run);
+            return "workfow started";
+        }
+    }
+
+```
