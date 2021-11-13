@@ -3,6 +3,9 @@ package io.quarkus.temporal.client.deployment;
 import io.quarkus.builder.item.SimpleBuildItem;
 import io.quarkus.temporal.runtime.WorkflowRuntimeBuildItem;
 
+/**
+ * @Author Mostafa
+ */
 public final class WorkflowBuildItem extends SimpleBuildItem {
 
     private WorkflowRuntimeBuildItem workflowRuntimeBuildItems;

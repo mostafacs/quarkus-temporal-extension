@@ -1,4 +1,4 @@
-package io.quarkus.temporal.client.deployment        //TODO: temporal workflow need register here?
+package io.quarkus.temporal.client.deployment.graalvm        //TODO: temporal workflow need register here?
 ;
 
 import io.grpc.NameResolverProvider;
@@ -71,10 +71,13 @@ public class NettyShadedProcessor {
         reflections.produce(new ReflectiveClassBuildItem(true, true, true, ReadableBuffers.class));
     }
 
-    @BuildStep
-    void addNativeResourceForNettyShaded(BuildProducer<NativeImageResourceDirectoryBuildItem> resourceBuildItem) {
-        resourceBuildItem.produce(new NativeImageResourceDirectoryBuildItem("META-INF"));
-    }
+    /** The next step fails to package the project
+    /* [ERROR] [error]: Build step io.quarkus.deployment.steps.NativeImageResourcesStep#registerPackageResources threw an exception: java.lang.StringIndexOutOfBoundsException: begin 0, end -1, length 65
+    */
+    //    @BuildStep
+    //    void addNativeResourceForNettyShaded(BuildProducer<NativeImageResourceDirectoryBuildItem> resourceBuildItem) {
+    //        resourceBuildItem.produce(new NativeImageResourceDirectoryBuildItem("META-INF"));
+    //    }
 
     @BuildStep
     void runTimeInitializationForNettyShaded(BuildProducer<RuntimeInitializedClassBuildItem> runtimeInitialized,

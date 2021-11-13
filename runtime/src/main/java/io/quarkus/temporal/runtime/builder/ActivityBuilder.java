@@ -9,6 +9,10 @@ import io.temporal.workflow.Workflow;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+/**
+ * @Author Mostafa
+ * */
+
 @Singleton
 @Unremovable
 public class ActivityBuilder {

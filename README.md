@@ -46,8 +46,12 @@ With this extension you can easily implement a temporal workflow in your quarkus
     </dependencies>
 </dependencyManagement>
 ```
+3- Add temporal server url config in `application.properties`
+```properties
+quarkus.temporal.service.url=localhost:7233
+```
 
-3- Add configuration file named `workflow.yml` to resources folder
+4- Add configuration file named `workflow.yml` to resources folder
 * Field `name` in annotation `@TemporalWorkflow` used to load workflow configurations 
 * Field `name` in annotation `@TemporalActivity` used to load activities configurations
 

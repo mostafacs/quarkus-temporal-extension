@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.sellware.quarkus-temporal</groupId>
         <artifactId>temporal-client-parent</artifactId>
-        <version>2.0.1-SNAPSHOT</version>
+        <version>2.0.1</version>
     </parent>
     <artifactId>temporal-client-integration-tests</artifactId>
     <name>Temporal Client - Integration Tests</name>
@@ -36,7 +36,7 @@
         <dependency>
             <groupId>com.sellware.quarkus-temporal</groupId>
             <artifactId>temporal-client</artifactId>
-            <version>2.0.1-SNAPSHOT</version>
+            <version>2.0.1</version>
         </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>

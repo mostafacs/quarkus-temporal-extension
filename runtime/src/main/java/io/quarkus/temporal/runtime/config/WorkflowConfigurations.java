@@ -7,7 +7,9 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
-
+/**
+ * @Author Mostafa
+ */
 public class WorkflowConfigurations {
 
     private final Long DEFAULT_WF_EXEC_TIMEOUT; // = 60l; // minutes
@@ -20,7 +22,8 @@ public class WorkflowConfigurations {
     // heartbeat timeout must be shorter than START_TO_CLOSE timeout
     private final Long DEFAULT_ACTIVITY_HEARTBEAT_TIMEOUT; // = 5l; // minutes
     private final Long DEFAULT_ACTIVITY_RETRY_INIT_INTERVAL; // = 1l; // minutes
-    private final Long DEFAULT_ACTIVITY_RETRY_MAX_INTERVAL;; // = 1l; // minutes
+    private final Long DEFAULT_ACTIVITY_RETRY_MAX_INTERVAL;
+    // = 1l; // minutes
     private final Double DEFAULT_ACTIVITY_RETRY_BACKOFF_COEFFICIENT; // = 1.0; // double
     private final Integer DEFAULT_ACTIVITY_RETRY_MAX_Attempts; // = 1; // retry count
 
@@ -29,15 +32,15 @@ public class WorkflowConfigurations {
 
     TemporalConfig temporalConfig;
     Map<String, WorkflowConfig> workflows;
-    
-    public WorkflowConfigurations(TemporalConfig temporalConfig){
-        if(temporalConfig.getWorkflows() != null) {
+
+    public WorkflowConfigurations(TemporalConfig temporalConfig) {
+        if (temporalConfig.getWorkflows() != null) {
             this.workflows = temporalConfig.getWorkflows();
         } else {
             this.workflows = new HashMap<>();
         }
 
-        if(temporalConfig.getDefaults() == null) {
+        if (temporalConfig.getDefaults() == null) {
             temporalConfig.setDefaults(new DefaultConfig());
         }
         DefaultConfig defaults = temporalConfig.getDefaults();
@@ -97,8 +100,8 @@ public class WorkflowConfigurations {
         String activityName = WorkflowRuntimeBuildItem.getActivityName(activity);
 
         WorkflowConfig wfConfig = workflows.get(workflowName);
-        if(wfConfig != null) {
-            if(wfConfig.getActivities() != null) {
+        if (wfConfig != null) {
+            if (wfConfig.getActivities() != null) {
                 return wfConfig.getActivities().getOrDefault(activityName, null);
             }
         }
@@ -110,6 +113,7 @@ public class WorkflowConfigurations {
         String minutes = config == null ? null : config.getScheduleTostartTimeout();
         return getActivityConfig(minutes, DEFAULT_ACTIVITY_SCHEDULE_TO_START_TIMEOUT);
     }
+
     public Duration activityScheduleToCloseTimeout(Class workflow, Class activity) {
         WorkflowConfig.ActivityConfig config = getActivityConfig(workflow, activity);
         String minutes = config == null ? null : config.getScheduleTocloseTimeout();
@@ -127,21 +131,25 @@ public class WorkflowConfigurations {
         String minutes = config == null ? null : config.getHeartbeatTimeout();
         return getActivityConfig(minutes, DEFAULT_ACTIVITY_HEARTBEAT_TIMEOUT);
     }
+
     public Duration activityRetryInitInterval(Class workflow, Class activity) {
         WorkflowConfig.ActivityConfig config = getActivityConfig(workflow, activity);
         String minutes = config == null ? null : config.getRetryInitInterval();
-        return getActivityConfig(minutes , DEFAULT_ACTIVITY_RETRY_INIT_INTERVAL);
+        return getActivityConfig(minutes, DEFAULT_ACTIVITY_RETRY_INIT_INTERVAL);
     }
+
     public Duration activityRetryMaxInterval(Class workflow, Class activity) {
         WorkflowConfig.ActivityConfig config = getActivityConfig(workflow, activity);
         String minutes = config == null ? null : config.getRetryMaxInterval();
         return getActivityConfig(minutes, DEFAULT_ACTIVITY_RETRY_MAX_INTERVAL);
     }
+
     public double activityRetryBackOffCoefficient(Class workflow, Class activity) {
         WorkflowConfig.ActivityConfig config = getActivityConfig(workflow, activity);
         String value = config == null ? null : config.getRetryBackoffCoefficient();
         return getDoubleValue(value, DEFAULT_ACTIVITY_RETRY_BACKOFF_COEFFICIENT);
     }
+
     public Integer activityRetryMaxAttempts(Class workflow, Class activity) {
         WorkflowConfig.ActivityConfig config = getActivityConfig(workflow, activity);
         String value = config == null ? null : config.getRetryMaxAttempts();
@@ -153,10 +161,10 @@ public class WorkflowConfigurations {
     }
 
     private Duration getMinutesDuration(String minutes, Long defaultValue) {
-        if(minutes != null) {
+        if (minutes != null) {
             Double minutesNum = Double.parseDouble(minutes);
             double fraction = minutesNum - minutesNum.longValue();
-            if(fraction > 0) {
+            if (fraction > 0) {
                 Double secondValue = minutesNum * 60;
                 return Duration.ofSeconds(secondValue.longValue());
             }
@@ -166,20 +174,21 @@ public class WorkflowConfigurations {
     }
 
     private Duration getSecondsDuration(String seconds, Integer defaultValue) {
-        if(seconds != null) {
+        if (seconds != null) {
             return Duration.ofMinutes(Integer.parseInt(seconds));
         }
         return Duration.ofMinutes(defaultValue);
     }
 
     private double getDoubleValue(String doubleString, Double defaultValue) {
-        if(doubleString != null) {
+        if (doubleString != null) {
             return Double.parseDouble(doubleString);
         }
         return defaultValue;
     }
+
     private int getIntValue(String intString, Integer defaultValue) {
-        if(intString != null) {
+        if (intString != null) {
             return Integer.parseInt(intString);
         }
         return defaultValue;

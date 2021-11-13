@@ -2,6 +2,9 @@ package io.quarkus.temporal.runtime.config;
 
 import java.util.Map;
 
+/**
+ * @Author Mostafa
+ * */
 public class WorkflowConfig {
 
     String executionTimeout;

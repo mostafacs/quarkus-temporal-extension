@@ -6,11 +6,13 @@ import io.quarkus.temporal.runtime.annotations.TemporalActivity;
 import io.temporal.worker.WorkerFactory;
 
 import javax.annotation.Priority;
-import javax.inject.Inject;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
 
+/**
+ * @Author Mostafa
+ */
 
 @EnableRequestScope
 @Priority(2020)
