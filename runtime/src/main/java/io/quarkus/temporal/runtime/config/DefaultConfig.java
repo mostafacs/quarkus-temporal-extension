@@ -2,7 +2,7 @@ package io.quarkus.temporal.runtime.config;
 
 /**
  * @Author Mostafa
- * */
+ */
 public class DefaultConfig {
 
     private Long workflowExecutionTimeout;

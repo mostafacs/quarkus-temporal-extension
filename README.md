@@ -6,7 +6,8 @@ With this extension you can easily implement a temporal workflow in your quarkus
 
 1- Add extension dependency to your maven POM file.
 
-* Quarkus 2.x , JDK 11 and  Native Image Build Support 
+* Quarkus 2.x , JDK 11 and Native Image Build Support
+
  ```xml
 <dependency>
     <groupId>com.sellware.quarkus-temporal</groupId>
@@ -15,7 +16,8 @@ With this extension you can easily implement a temporal workflow in your quarkus
 </dependency>
 ```
 
-* Quarkus 1.x , JDK 8 ( Native image build not supported) 
+* Quarkus 1.x , JDK 8 ( Native image build not supported)
+
  ```xml
 <dependency>
     <groupId>com.sellware.quarkus-temporal</groupId>
@@ -24,9 +26,8 @@ With this extension you can easily implement a temporal workflow in your quarkus
 </dependency>
 ```
 
-
-
 2- Updated netty-shaded on quarkus-bom
+
 ```xml
  <dependencyManagement>
     <dependencies>
@@ -46,16 +47,20 @@ With this extension you can easily implement a temporal workflow in your quarkus
     </dependencies>
 </dependencyManagement>
 ```
+
 3- Add temporal server url config in `application.properties`
+
 ```properties
 quarkus.temporal.service.url=localhost:7233
 ```
 
 4- Add configuration file named `workflow.yml` to resources folder
-* Field `name` in annotation `@TemporalWorkflow` used to load workflow configurations 
+
+* Field `name` in annotation `@TemporalWorkflow` used to load workflow configurations
 * Field `name` in annotation `@TemporalActivity` used to load activities configurations
 
 #### Example
+
 ```yml
 defaults:
   workflowExecutionTimeout: 20 # in minutes default is 60 minute if not set
@@ -114,6 +119,7 @@ workflows:
 ```
 
 ### Declare your Temporal Workflows:
+
 ```java
     @WorkflowInterface
     public interface TestWorkflow {

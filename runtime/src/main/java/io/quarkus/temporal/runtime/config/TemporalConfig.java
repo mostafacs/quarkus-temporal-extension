@@ -4,7 +4,7 @@ import java.util.Map;
 
 /**
  * @Author Mostafa
- * */
+ */
 public class TemporalConfig {
 
     private DefaultConfig defaults;

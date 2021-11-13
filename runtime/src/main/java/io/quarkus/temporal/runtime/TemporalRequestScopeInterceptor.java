@@ -2,8 +2,6 @@ package io.quarkus.temporal.runtime;
 
 import io.quarkus.arc.Arc;
 import io.quarkus.temporal.runtime.annotations.EnableRequestScope;
-import io.quarkus.temporal.runtime.annotations.TemporalActivity;
-import io.temporal.worker.WorkerFactory;
 
 import javax.annotation.Priority;
 import javax.interceptor.AroundInvoke;

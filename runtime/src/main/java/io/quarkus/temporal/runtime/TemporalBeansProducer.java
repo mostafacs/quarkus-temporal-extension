@@ -14,6 +14,7 @@ import io.temporal.worker.Worker;
 import io.temporal.worker.WorkerFactory;
 import io.temporal.workflow.Functions;
 import io.temporal.workflow.WorkflowInterface;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 import java.lang.reflect.Field;
@@ -44,20 +45,20 @@ public class TemporalBeansProducer {
     @Startup
     public WorkerFactory workflowClient(WorkflowClient workflowClient,
                                         ActivityBuilder activityBuilder,
-                                        WorkflowRuntimeBuildItem workflowRuntimeBuildItem) throws Exception{
+                                        WorkflowRuntimeBuildItem workflowRuntimeBuildItem) throws Exception {
 
-        WorkerFactory factory =  WorkerFactory.newInstance(workflowClient);
+        WorkerFactory factory = WorkerFactory.newInstance(workflowClient);
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         for (Map.Entry<String, Set<String>> entry : workflowRuntimeBuildItem.getActivities().entrySet()) {
             String queue = entry.getKey();
             Set<String> classNames = entry.getValue();
             Object[] activities = new Object[classNames.size()];
-            int c=0;
-            for(String clazzName : classNames) {
+            int c = 0;
+            for (String clazzName : classNames) {
                 Class clazz = classLoader.loadClass(clazzName);
-                activities[c]=Arc.container().select(clazz).get();
-                for(Class interfacei : activities[c].getClass().getInterfaces()) {
-                    if(interfacei.isAnnotationPresent(ActivityInterface.class)) {
+                activities[c] = Arc.container().select(clazz).get();
+                for (Class interfacei : activities[c].getClass().getInterfaces()) {
+                    if (interfacei.isAnnotationPresent(ActivityInterface.class)) {
                         TemporalActivity ta = activities[c].getClass().getAnnotation(TemporalActivity.class);
                         workflowRuntimeBuildItem.putActivityInterfaceInfo(interfacei, queue, ta.name());
                         break;
@@ -81,19 +82,20 @@ public class TemporalBeansProducer {
                 worker = factory.newWorker(queue);
             }
 
-            for(String clazzName : classNames) {
+            for (String clazzName : classNames) {
                 Class clazz = classLoader.loadClass(clazzName);
                 Class[] interfaces = clazz.getInterfaces();
                 Class workflowInterface = null;
-                for(Class interfacei : interfaces) {
-                    if(interfacei.isAnnotationPresent(WorkflowInterface.class)) {
+                for (Class interfacei : interfaces) {
+                    if (interfacei.isAnnotationPresent(WorkflowInterface.class)) {
                         TemporalWorkflow ta = (TemporalWorkflow) clazz.getAnnotation(TemporalWorkflow.class);
                         workflowRuntimeBuildItem.putWorkflowInterfaceInfo(interfacei, queue, ta.name());
                         workflowInterface = interfacei;
                         break;
                     }
                 }
-                if(workflowInterface == null) throw new IllegalArgumentException(clazzName+" not implement interface with @WorkflowInterface");
+                if (workflowInterface == null)
+                    throw new IllegalArgumentException(clazzName + " not implement interface with @WorkflowInterface");
 
                 worker.addWorkflowImplementationFactory(workflowInterface, new SimpleWorkflowFactory(
                         clazz, workflowInterface, activityBuilder
@@ -105,7 +107,6 @@ public class TemporalBeansProducer {
         workflowRuntimeBuildItem.clear();
         return factory;
     }
-
 
 
     private static class SimpleWorkflowFactory implements Functions.Func {
@@ -135,11 +136,11 @@ public class TemporalBeansProducer {
         }
 
 
-        private void fillActivitiesStubs(Object workflow) throws Exception{
+        private void fillActivitiesStubs(Object workflow) throws Exception {
             Field fields[] = workflowImplClass.getDeclaredFields();
 
-            for(Field field : fields) {
-                if(field.isAnnotationPresent(TemporalActivityStub.class)) {
+            for (Field field : fields) {
+                if (field.isAnnotationPresent(TemporalActivityStub.class)) {
                     field.setAccessible(true);
                     Object activity = activityBuilder.build(workflowInterface, field.getType());
                     field.set(workflow, activity);

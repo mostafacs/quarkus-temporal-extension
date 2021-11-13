@@ -13,6 +13,6 @@ public class TemporalServerBuildTimeConfig {
     /**
      * Temporal service url
      */
-    @ConfigItem(name="service.url")
+    @ConfigItem(name = "service.url")
     public String serviceUrl;
 }

@@ -3,6 +3,7 @@ package io.quarkus.temporal.runtime.config;
 import io.quarkus.temporal.runtime.WorkflowRuntimeBuildItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;

@@ -12,7 +12,7 @@ import javax.inject.Singleton;
 
 /**
  * @Author Mostafa
- * */
+ */
 
 @Singleton
 @Unremovable
@@ -28,7 +28,8 @@ public class WorkflowBuilder {
     WorkflowRuntimeBuildItem workflowRuntimeBuildItem;
 
     public <T> T build(Class<T> workflowClass, String workflowId) {
-        if(!workflowClass.isInterface()) throw new IllegalArgumentException("Please pass workflow interface (not implemented class)");
+        if (!workflowClass.isInterface())
+            throw new IllegalArgumentException("Please pass workflow interface (not implemented class)");
         WorkflowOptions workflowOptions = buildDefaultWorkflowOptions(workflowClass, workflowId);
         return workflowClient.newWorkflowStub(workflowClass, workflowOptions);
     }

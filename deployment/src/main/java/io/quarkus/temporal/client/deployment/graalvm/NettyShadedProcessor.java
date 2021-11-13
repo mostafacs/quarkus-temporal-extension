@@ -1,5 +1,5 @@
 package io.quarkus.temporal.client.deployment.graalvm        //TODO: temporal workflow need register here?
-;
+        ;
 
 import io.grpc.NameResolverProvider;
 import io.grpc.internal.DnsNameResolverProvider;
@@ -9,7 +9,6 @@ import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.builditem.CombinedIndexBuildItem;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
-import io.quarkus.deployment.builditem.nativeimage.NativeImageResourceDirectoryBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.RuntimeInitializedClassBuildItem;
 import io.quarkus.deployment.builditem.nativeimage.RuntimeInitializedPackageBuildItem;
@@ -71,17 +70,17 @@ public class NettyShadedProcessor {
         reflections.produce(new ReflectiveClassBuildItem(true, true, true, ReadableBuffers.class));
     }
 
-    /** The next step fails to package the project
-    /* [ERROR] [error]: Build step io.quarkus.deployment.steps.NativeImageResourcesStep#registerPackageResources threw an exception: java.lang.StringIndexOutOfBoundsException: begin 0, end -1, length 65
-    */
+    /**
+     * The next step fails to package the project
+     * /* [ERROR] [error]: Build step io.quarkus.deployment.steps.NativeImageResourcesStep#registerPackageResources threw an exception: java.lang.StringIndexOutOfBoundsException: begin 0, end -1, length 65
+     */
     //    @BuildStep
     //    void addNativeResourceForNettyShaded(BuildProducer<NativeImageResourceDirectoryBuildItem> resourceBuildItem) {
     //        resourceBuildItem.produce(new NativeImageResourceDirectoryBuildItem("META-INF"));
     //    }
-
     @BuildStep
     void runTimeInitializationForNettyShaded(BuildProducer<RuntimeInitializedClassBuildItem> runtimeInitialized,
-                                 BuildProducer<RuntimeInitializedPackageBuildItem> runtimePackages) {
+                                             BuildProducer<RuntimeInitializedPackageBuildItem> runtimePackages) {
         runtimeInitialized.produce(new RuntimeInitializedClassBuildItem("io.grpc.netty.shaded.io.netty.handler.ssl.OpenSsl"));
         runtimeInitialized.produce(new RuntimeInitializedClassBuildItem("io.grpc.netty.shaded.io.netty.handler.ssl.OpenSslContext"));
         runtimeInitialized.produce(new RuntimeInitializedClassBuildItem("io.grpc.netty.shaded.io.netty.handler.ssl.ReferenceCountedOpenSslEngine"));

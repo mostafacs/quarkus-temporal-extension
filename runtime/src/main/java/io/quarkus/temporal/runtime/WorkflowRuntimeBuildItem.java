@@ -12,7 +12,7 @@ import java.util.Set;
  */
 public final class WorkflowRuntimeBuildItem {
 
-    private final class NameQueueInfo{
+    private final class NameQueueInfo {
 
         public NameQueueInfo() {
         }
@@ -25,6 +25,7 @@ public final class WorkflowRuntimeBuildItem {
         public String name;
         public String queue;
     }
+
     private Map<String, Set<String>> activities = new HashMap<>();
 
     private Map<String, List<String>> workflows = new HashMap<>();
@@ -36,7 +37,7 @@ public final class WorkflowRuntimeBuildItem {
     private List<String> activitiesFlat = new ArrayList<>();
 
 
-    public WorkflowRuntimeBuildItem(){
+    public WorkflowRuntimeBuildItem() {
 
     }
 
@@ -45,7 +46,7 @@ public final class WorkflowRuntimeBuildItem {
     }
 
     public void addActivityInterface(String queue, String clazz) {
-        if(activities.containsKey(queue)) {
+        if (activities.containsKey(queue)) {
             activities.get(queue).add(clazz);
         } else {
             Set a = new HashSet();
@@ -55,7 +56,7 @@ public final class WorkflowRuntimeBuildItem {
     }
 
     public void addWorkflowImpl(String queue, String clazz) {
-        if(workflows.containsKey(queue)) {
+        if (workflows.containsKey(queue)) {
             workflows.get(queue).add(clazz);
         } else {
             ArrayList a = new ArrayList();
@@ -70,14 +71,14 @@ public final class WorkflowRuntimeBuildItem {
     }
 
     public void putWorkflowInterfaceInfo(Class workflowInterface, String queue, String name) {
-        if(name==null || name.length() == 0) {
+        if (name == null || name.length() == 0) {
             name = workflowInterface.getSimpleName();
         }
         workflowToQueue.put(workflowInterface, new NameQueueInfo(name, queue));
     }
 
     public void putActivityInterfaceInfo(Class activityInterface, String queue, String name) {
-        if(name==null || name.length()==0) {
+        if (name == null || name.length() == 0) {
             name = activityInterface.getSimpleName();
         }
         activityToQueue.put(activityInterface, new NameQueueInfo(name, queue));

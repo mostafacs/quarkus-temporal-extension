@@ -3,9 +3,9 @@ package io.quarkus.temporal.runtime;
 import java.util.function.Supplier;
 
 /**
+ * @param <T>
  * @Author Mostafa
  * Generic Supplier for handle workflow implementation supplier
- * @param <T>
  */
 public class GenericSupplier<T> implements Supplier<T> {
 

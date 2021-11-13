@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 /**
  * @Author Mostafa
- * */
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface TemporalActivityStub {
