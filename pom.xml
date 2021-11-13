@@ -49,11 +49,11 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <maven.compiler.parameters>true</maven.compiler.parameters>
-        <quarkus.version>2.2.1.Final</quarkus.version>
+        <quarkus.version>2.4.1.Final</quarkus.version>
         <doma.version>2.47.1</doma.version>
         <compiler-plugin.version>3.8.1</compiler-plugin.version>
         <surefire-plugin.version>3.0.0-M5</surefire-plugin.version>
-        <temporal.version>1.2.0</temporal.version>
+        <temporal.version>1.5.0</temporal.version>
     </properties>
 
     <dependencyManagement>
@@ -64,12 +64,6 @@
                 <version>${quarkus.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
-            </dependency>
-            <!-- just necessary when quarkus < 2.3 -->
-            <dependency>
-                <groupId>io.grpc</groupId>
-                <artifactId>grpc-netty-shaded</artifactId>
-                <version>1.39.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
