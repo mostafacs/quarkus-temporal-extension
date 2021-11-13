@@ -1,12 +1,12 @@
 # QUARKUS - TEMPORAL EXTENSION
 
 With this extension you can easily implement a temporal workflow in your quarkus project.
-
+Review this [demo](https://github.com/mostafacs/quarkus-temporal-demo) for quick start.
 ## How to use ?
 
 1- Add extension dependency to your maven POM file.
 
-* Quarkus 2.4.2 , JDK 11 and Native Image Build Support
+* Quarkus 2.4.2 , JDK 11 and Native Image Build Support (graalvm-ce-java11-21.2.0)
 
  ```xml
 <dependency>
