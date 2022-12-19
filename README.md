@@ -52,6 +52,7 @@ Review this [demo](https://github.com/mostafacs/quarkus-temporal-demo) for a qui
 
 ```properties
 quarkus.temporal.service.url=localhost:7233
+quarkus.temporal.service.secure=true
 ```
 
 4- Add configuration file named `workflow.yml` to resources folder
