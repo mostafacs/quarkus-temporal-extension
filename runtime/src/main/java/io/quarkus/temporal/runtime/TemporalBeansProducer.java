@@ -12,6 +12,7 @@ import io.temporal.serviceclient.WorkflowServiceStubs;
 import io.temporal.serviceclient.WorkflowServiceStubsOptions;
 import io.temporal.worker.Worker;
 import io.temporal.worker.WorkerFactory;
+import io.temporal.worker.WorkerOptions;
 import io.temporal.workflow.Functions;
 import io.temporal.workflow.WorkflowInterface;
 
@@ -33,6 +34,7 @@ public class TemporalBeansProducer {
     public WorkflowClient workflowClient(TemporalServerBuildTimeConfig temporalServerBuildTimeConfig) {
         WorkflowServiceStubsOptions options = WorkflowServiceStubsOptions.newBuilder()
                 .setTarget(temporalServerBuildTimeConfig.serviceUrl)
+                .setEnableHttps(Boolean.parseBoolean(temporalServerBuildTimeConfig.serviceSecure))
                 .build();
 
         WorkflowServiceStubs service = WorkflowServiceStubs.newInstance(options);
@@ -67,7 +69,9 @@ public class TemporalBeansProducer {
                 c++;
             }
 
-            Worker worker = factory.newWorker(queue);
+            Worker worker = factory.newWorker(queue, WorkerOptions.newBuilder()
+            .setMaxConcurrentActivityExecutionSize(0)
+            .build());
             worker.registerActivitiesImplementations(activities);
         }
 

@@ -1,5 +1,6 @@
 package io.quarkus.temporal.runtime;
 
+
 import io.quarkus.runtime.annotations.ConfigItem;
 import io.quarkus.runtime.annotations.ConfigPhase;
 import io.quarkus.runtime.annotations.ConfigRoot;
@@ -15,4 +16,10 @@ public class TemporalServerBuildTimeConfig {
      */
     @ConfigItem(name = "service.url")
     public String serviceUrl;
+
+    /**
+     * Temporal service secure
+     */
+    @ConfigItem(name = "service.secure")
+    public String serviceSecure;
 }
