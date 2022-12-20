@@ -2,11 +2,13 @@ package io.quarkus.temporal.runtime;
 
 import io.quarkus.arc.Arc;
 import io.quarkus.runtime.Startup;
+import io.quarkus.temporal.runtime.annotations.CompletionClient;
 import io.quarkus.temporal.runtime.annotations.TemporalActivity;
 import io.quarkus.temporal.runtime.annotations.TemporalActivityStub;
 import io.quarkus.temporal.runtime.annotations.TemporalWorkflow;
 import io.quarkus.temporal.runtime.builder.ActivityBuilder;
 import io.temporal.activity.ActivityInterface;
+import io.temporal.client.ActivityCompletionClient;
 import io.temporal.client.WorkflowClient;
 import io.temporal.serviceclient.WorkflowServiceStubs;
 import io.temporal.serviceclient.WorkflowServiceStubsOptions;
@@ -41,6 +43,26 @@ public class TemporalBeansProducer {
         return WorkflowClient.newInstance(service);
     }
 
+    /**
+     * Injects a completion client instance 
+     * into an activity implementation instance
+     * 
+     * @param activityImpl activity implementation
+     * @param completionClient completion client
+     * @return activity implementation instance
+     * @throws Exception
+     */
+    private Object injectCompletionClient(Object activityImpl, ActivityCompletionClient completionClient) throws Exception {
+        Field fields[] = activityImpl.getClass().getDeclaredFields();
+        for (Field field : fields) {
+            if (field.isAnnotationPresent(CompletionClient.class)) {
+                field.setAccessible(true);
+                field.set(activityImpl, completionClient);
+                break;
+            }
+        }
+        return activityImpl;
+    }
 
     @Produces
     @ApplicationScoped
@@ -49,6 +71,7 @@ public class TemporalBeansProducer {
                                         ActivityBuilder activityBuilder,
                                         WorkflowRuntimeBuildItem workflowRuntimeBuildItem) throws Exception {
 
+        ActivityCompletionClient completionClient = workflowClient.newActivityCompletionClient();
         WorkerFactory factory = WorkerFactory.newInstance(workflowClient);
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         for (Map.Entry<String, Set<String>> entry : workflowRuntimeBuildItem.getActivities().entrySet()) {
@@ -59,6 +82,8 @@ public class TemporalBeansProducer {
             for (String clazzName : classNames) {
                 Class clazz = classLoader.loadClass(clazzName);
                 activities[c] = Arc.container().select(clazz).get();
+                //inject our completionClient
+                activities[c] = injectCompletionClient(activities[c], completionClient);
                 for (Class interfacei : activities[c].getClass().getInterfaces()) {
                     if (interfacei.isAnnotationPresent(ActivityInterface.class)) {
                         TemporalActivity ta = activities[c].getClass().getAnnotation(TemporalActivity.class);
