@@ -10,6 +10,7 @@ import io.quarkus.temporal.runtime.builder.ActivityBuilder;
 import io.temporal.activity.ActivityInterface;
 import io.temporal.client.ActivityCompletionClient;
 import io.temporal.client.WorkflowClient;
+import io.temporal.client.WorkflowClientOptions;
 import io.temporal.serviceclient.WorkflowServiceStubs;
 import io.temporal.serviceclient.WorkflowServiceStubsOptions;
 import io.temporal.worker.Worker;
@@ -40,7 +41,13 @@ public class TemporalBeansProducer {
                 .build();
 
         WorkflowServiceStubs service = WorkflowServiceStubs.newInstance(options);
-        return WorkflowClient.newInstance(service);
+        WorkflowClientOptions clientOptions =
+                WorkflowClientOptions
+                        .newBuilder()
+                        .setNamespace(temporalServerBuildTimeConfig.serviceNamespace)
+                        .build();
+        WorkflowClient client = WorkflowClient.newInstance(service, clientOptions);
+        return client;
     }
 
     /**
