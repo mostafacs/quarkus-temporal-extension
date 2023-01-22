@@ -18,6 +18,12 @@ public class TemporalServerBuildTimeConfig {
     public String serviceUrl;
 
     /**
+     * Temporal service url
+     */
+    @ConfigItem(name = "service.namespace")
+    public String serviceNamespace;
+
+    /**
      * Temporal service secure
      */
     @ConfigItem(name = "service.secure")
