@@ -46,8 +46,7 @@ public class TemporalBeansProducer {
                         .newBuilder()
                         .setNamespace(temporalServerBuildTimeConfig.serviceNamespace)
                         .build();
-        WorkflowClient client = WorkflowClient.newInstance(service, clientOptions);
-        return client;
+        return WorkflowClient.newInstance(service, clientOptions);
     }
 
     /**
