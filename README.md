@@ -12,7 +12,7 @@ Review this [demo](https://github.com/mostafacs/quarkus-temporal-demo) for a qui
 <dependency>
     <groupId>com.sellware.quarkus-temporal</groupId>
     <artifactId>temporal-client</artifactId>
-    <version>2.0.1</version>
+    <version>2.0.2</version>
 </dependency>
 ```
 
@@ -52,6 +52,7 @@ Review this [demo](https://github.com/mostafacs/quarkus-temporal-demo) for a qui
 
 ```properties
 quarkus.temporal.service.url=localhost:7233
+quarkus.temporal.service.secure=true
 ```
 
 4- Add configuration file named `workflow.yml` to resources folder
