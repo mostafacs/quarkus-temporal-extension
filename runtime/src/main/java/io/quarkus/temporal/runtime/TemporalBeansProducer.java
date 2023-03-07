@@ -6,12 +6,15 @@ import io.quarkus.temporal.runtime.annotations.TemporalActivity;
 import io.quarkus.temporal.runtime.annotations.TemporalActivityStub;
 import io.quarkus.temporal.runtime.annotations.TemporalWorkflow;
 import io.quarkus.temporal.runtime.builder.ActivityBuilder;
+import io.quarkus.temporal.runtime.interceptor.TemporalMultiTenantInterceptor;
 import io.temporal.activity.ActivityInterface;
 import io.temporal.client.WorkflowClient;
+import io.temporal.common.interceptors.WorkerInterceptor;
 import io.temporal.serviceclient.WorkflowServiceStubs;
 import io.temporal.serviceclient.WorkflowServiceStubsOptions;
 import io.temporal.worker.Worker;
 import io.temporal.worker.WorkerFactory;
+import io.temporal.worker.WorkerFactoryOptions;
 import io.temporal.workflow.Functions;
 import io.temporal.workflow.WorkflowInterface;
 
@@ -21,6 +24,7 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @Author Mostafa
@@ -44,10 +48,20 @@ public class TemporalBeansProducer {
     @ApplicationScoped
     @Startup
     public WorkerFactory workflowClient(WorkflowClient workflowClient,
+                                        TemporalServerBuildTimeConfig temporalServerBuildTimeConfig,
                                         ActivityBuilder activityBuilder,
                                         WorkflowRuntimeBuildItem workflowRuntimeBuildItem) throws Exception {
 
-        WorkerFactory factory = WorkerFactory.newInstance(workflowClient);
+        List<WorkerInterceptor> interceptors = Arc.container().select(WorkerInterceptor.class).stream().collect(Collectors.toList());
+        WorkerFactoryOptions factoryOptions = WorkerFactoryOptions.getDefaultInstance();
+        if(temporalServerBuildTimeConfig.multiTenantEnabled) {
+            interceptors.add(new TemporalMultiTenantInterceptor());
+        }
+        if(!interceptors.isEmpty()) {
+            factoryOptions = WorkerFactoryOptions.newBuilder().setWorkerInterceptors(interceptors.toArray(new WorkerInterceptor[interceptors.size()])).validateAndBuildWithDefaults();
+        }
+        WorkerFactory factory = WorkerFactory.newInstance(workflowClient, factoryOptions);
+
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         for (Map.Entry<String, Set<String>> entry : workflowRuntimeBuildItem.getActivities().entrySet()) {
             String queue = entry.getKey();

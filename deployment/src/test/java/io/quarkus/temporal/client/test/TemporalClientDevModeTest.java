@@ -20,7 +20,8 @@ public class TemporalClientDevModeTest {
     @RegisterExtension
     static final QuarkusDevModeTest devModeTest = new QuarkusDevModeTest()
             .setArchiveProducer(() -> ShrinkWrap.create(JavaArchive.class)
-                    .add(new StringAsset("quarkus.temporal.service.url=localhost:7233"), "application.properties"));
+                    .add(new StringAsset("quarkus.temporal.service.url=localhost:7233"), "application.properties")
+                    .add(new StringAsset("quarkus.temporal.multi-tenant.enabled=false"), "application.properties"));
 
     @Test
     public void writeYourOwnDevModeTest() {

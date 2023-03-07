@@ -15,4 +15,10 @@ public class TemporalServerBuildTimeConfig {
      */
     @ConfigItem(name = "service.url")
     public String serviceUrl;
+
+    /**
+     * enable multi-tenancy to init request scopes
+     */
+    @ConfigItem(name = "multi-tenant.enabled")
+    public boolean multiTenantEnabled;
 }

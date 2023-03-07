@@ -12,7 +12,7 @@ Review this [demo](https://github.com/mostafacs/quarkus-temporal-demo) for a qui
 <dependency>
     <groupId>com.sellware.quarkus-temporal</groupId>
     <artifactId>temporal-client</artifactId>
-    <version>2.0.1</version>
+    <version>2.0.2</version>
 </dependency>
 ```
 
@@ -52,7 +52,10 @@ Review this [demo](https://github.com/mostafacs/quarkus-temporal-demo) for a qui
 
 ```properties
 quarkus.temporal.service.url=localhost:7233
+quarkus.temporal.multi-tenant.enabled=false # false is the default
 ```
+
+Enable multi-tenancy will init RequestContext before calling the activity method.
 
 4- Add configuration file named `workflow.yml` to resources folder
 
@@ -143,6 +146,25 @@ workflows:
             System.out.println("Workflow <<1>> completed");
         }
     }
+```
+
+### Add your own interceptors (you can add many interceptors classes)
+```java 
+    @Singleton
+    @Unremovable
+    public class TemporalLoggingInterceptor implements WorkerInterceptor {
+        
+        @Override
+        public WorkflowInboundCallsInterceptor interceptWorkflow(WorkflowInboundCallsInterceptor next) {
+            return new MyWorkflowInboundInterceptor(next);
+        }
+    
+        @Override
+        public ActivityInboundCallsInterceptor interceptActivity(ActivityInboundCallsInterceptor next) {
+            return new MyActivityInboundInterceptor(next);
+        }
+        
+    }  
 ```
 
 ### Run your workflow:
