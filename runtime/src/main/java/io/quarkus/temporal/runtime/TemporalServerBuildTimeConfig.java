@@ -7,7 +7,7 @@ import io.quarkus.runtime.annotations.ConfigRoot;
 /**
  * @Author Mostafa
  */
-@ConfigRoot(name = "temporal", phase = ConfigPhase.BUILD_AND_RUN_TIME_FIXED)
+@ConfigRoot(name = "temporal", phase = ConfigPhase.RUN_TIME)
 public class TemporalServerBuildTimeConfig {
 
     /**

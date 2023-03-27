@@ -14,7 +14,6 @@ import io.quarkus.deployment.builditem.nativeimage.ReflectiveClassBuildItem;
 import io.quarkus.temporal.runtime.GenericSupplier;
 import io.quarkus.temporal.runtime.TemporalBeansProducer;
 import io.quarkus.temporal.runtime.TemporalRecorder;
-import io.quarkus.temporal.runtime.TemporalRequestScopeInterceptor;
 import io.quarkus.temporal.runtime.WorkflowRuntimeBuildItem;
 import io.quarkus.temporal.runtime.annotations.TemporalActivity;
 import io.quarkus.temporal.runtime.annotations.TemporalActivityStub;
@@ -162,7 +161,6 @@ class TemporalClientProcessor {
     void initBeans(BuildProducer<AdditionalBeanBuildItem> additionalBeans,
                    WorkflowBuildItem workflowBuildItem) {
 
-        additionalBeans.produce(AdditionalBeanBuildItem.builder().addBeanClass(TemporalRequestScopeInterceptor.class).build());
         additionalBeans.produce(AdditionalBeanBuildItem.builder().addBeanClass(ActivityBuilder.class).build());
         additionalBeans.produce(AdditionalBeanBuildItem.builder().addBeanClass(WorkflowBuilder.class).build());
 
