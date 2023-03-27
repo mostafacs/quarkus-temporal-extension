@@ -12,7 +12,7 @@ Review this [demo](https://github.com/mostafacs/quarkus-temporal-demo) for a qui
 <dependency>
     <groupId>com.sellware.quarkus-temporal</groupId>
     <artifactId>temporal-client</artifactId>
-    <version>2.0.3</version>
+    <version>2.0.4</version>
 </dependency>
 ```
 
